@@ -1,0 +1,16 @@
+[project]
+name = "complaint-radar"
+version = "0.1.0"
+description = "Turn player feedback into complaint categories, spike alerts and reply drafts."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+claude = ["anthropic>=2.12"]
+dev = ["pytest"]
+
+[project.scripts]
+radar = "radar.cli:main"
+
+[tool.setuptools]
+packages = ["radar"]
