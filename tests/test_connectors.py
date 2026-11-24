@@ -5,10 +5,11 @@ from __future__ import annotations
 import json
 import threading
 import urllib.parse
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from typing import Any, Callable
+from typing import Any
 
 import pytest
 

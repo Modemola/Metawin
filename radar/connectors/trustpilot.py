@@ -17,7 +17,8 @@ details in review text are redacted.
 from __future__ import annotations
 
 import urllib.parse
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from ._http import ConnectorError, request_json
 from .privacy import redact

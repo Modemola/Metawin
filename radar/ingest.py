@@ -194,6 +194,10 @@ def parse_trustpilot_json(data: dict | list) -> list[Complaint]:
 
 # ---------------------------------------------------------------- Intercom (JSON)
 
+_STAFF = {"admin", "bot", "team", "operator"}
+_PLAYER = {"user", "lead", "contact"}
+
+
 def parse_intercom_json(data: dict | list) -> list[Complaint]:
     """Intercom conversation objects. Uses the opening message plus every later
     message written by the player (author.type == "user" / "lead")."""
@@ -201,10 +205,13 @@ def parse_intercom_json(data: dict | list) -> list[Complaint]:
     out = []
     for c in convs:
         src = c.get("source") or {}
-        parts = [_strip_html(src.get("body", ""))]
+        # Outbound conversations open with a message from staff or a bot; only
+        # the player's own words count as the complaint.
+        opener = (src.get("author") or {}).get("type")
+        parts = [] if opener in _STAFF else [_strip_html(src.get("body", ""))]
         cp = c.get("conversation_parts") or {}
         for p in cp.get("conversation_parts", []) if isinstance(cp, dict) else cp:
-            if (p.get("author") or {}).get("type") in ("user", "lead", "contact") and p.get("body"):
+            if (p.get("author") or {}).get("type") in _PLAYER and p.get("body"):
                 parts.append(_strip_html(p["body"]))
         text = "\n".join(t for t in parts if t)
         if not text:

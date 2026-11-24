@@ -143,3 +143,13 @@ def test_verdict_go_needs_volume_span_and_two_strong_findings():
         items.append(_c(day, f"lossback never credited, support is a bot, no real person {d}"))
     rep = analyze.analyze(classify.classify_rules(items))
     assert brief.assess(rep).decision == "GO"
+
+
+def test_intercom_outbound_message_is_not_counted_as_the_complaint():
+    conv = {"id": "o1", "created_at": 1793000000,
+            "source": {"body": "<p>Hi! Your weekly rakeback is ready.</p>", "author": {"type": "admin"}},
+            "conversation_parts": {"conversation_parts": [{"author": {"type": "user"}, "body": "it never arrived"}]}}
+    silent = {"id": "o2", "created_at": 1793000000, "source": {"body": "Promo news", "author": {"type": "bot"}},
+              "conversation_parts": {"conversation_parts": []}}
+    (c,) = ingest.parse_intercom_json([conv, silent])
+    assert c.text == "it never arrived"

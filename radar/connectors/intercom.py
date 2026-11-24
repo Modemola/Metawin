@@ -24,8 +24,9 @@ bodies are redacted (see `radar.connectors.privacy`).
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator
 from datetime import date, datetime, time, timedelta, timezone
-from typing import Any, Callable, Iterator
+from typing import Any
 
 from ._http import request_json
 from .privacy import redact
@@ -119,7 +120,12 @@ def clean_conversation(conv: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": str(conv.get("id")),
         "created_at": conv.get("created_at"),
-        "source": {"subject": redact(src.get("subject")), "body": redact(src.get("body"))},
+        "source": {
+            "subject": redact(src.get("subject")),
+            "body": redact(src.get("body")),
+            # Type only ("user", "lead", "admin", "bot"): outbound messages start with staff text.
+            "author": {"type": (src.get("author") or {}).get("type")},
+        },
         "conversation_parts": {
             "conversation_parts": [
                 {"author": {"type": (p.get("author") or {}).get("type")}, "body": redact(p.get("body"))}

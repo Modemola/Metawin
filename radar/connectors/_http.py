@@ -19,8 +19,9 @@ import json
 import time
 import urllib.error
 import urllib.request
+from collections.abc import Callable
 from email.message import Message
-from typing import Any, Callable
+from typing import Any
 
 MAX_RETRIES = 5
 MAX_WAIT_SECONDS = 120.0
