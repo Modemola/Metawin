@@ -156,8 +156,12 @@ def classify_with_claude(items: list[Complaint], cache_path: Path = Path(".cache
         for r in results:
             try:
                 c = batch[int(r["id"])]
-            except (ValueError, IndexError):
+            except (ValueError, IndexError, KeyError, TypeError):
                 continue
+            if r.get("category") not in CATEGORIES:
+                continue  # never let an unexpected value into the analysis
+            r["other_categories"] = [x for x in r.get("other_categories", []) if x in CATEGORIES]
+            r["promos"] = [x for x in r.get("promos", []) if x in PROMOS]
             cache[_cache_key(c)] = r
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         cache_path.write_text(json.dumps(cache))
