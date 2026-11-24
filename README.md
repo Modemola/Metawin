@@ -17,8 +17,30 @@ Discord/CSV exports) into a one-page report:
   a draft reply. Drafts never confirm account details or promise money, and a
   person edits every reply before posting it.
 
-Every run also writes a row-level CSV, so you can check or correct the
-classifications by hand.
+Every run also writes:
+
+- **`brief.md`**: the pitch. A short findings brief that leads with the two or
+  three strongest findings, each with numbers and short quotes (no reviewer
+  names), and a closing offer to run the tool on private support tickets. It
+  pastes cleanly into an email, an X DM or Notion. A brief made from `--sample`
+  data is stamped "Do not send".
+- **`verdict.md`**: internal only. A go/no-go on whether the data supports
+  pitching at all: is there enough of it (50+ negative reviews over 60+ days),
+  and are there at least two findings strong enough that a founder would act
+  on them? Treat it as a starting point, and read the quotes and the CSV
+  before deciding.
+- **A row-level CSV**, so you can check or correct the classifications by hand.
+
+### Before/after a promotion or credit drop
+
+```bash
+.venv/bin/python -m radar data/ --event "2026-10-20:Lossback drop" --event "2026-11-05:Cash Drop"
+```
+
+For each `--event`, the report compares negative reviews in the 14 days
+before and after the date (`--window` changes the number of days), lists which
+promotions were named afterwards, and marks the date on the weekly chart. A
+clear jump becomes the lead finding in `brief.md`.
 
 ## Quick start
 
@@ -32,8 +54,9 @@ python3 -m venv .venv && .venv/bin/pip install -e ".[claude,dev]"
 .venv/bin/python -m radar data/ -o out/report.html
 ```
 
-Outputs: `out/report.html` (the dashboard), `out/report.csv` (one row per
-review with its classification), `out/report.json` (headline numbers).
+Outputs, all in `out/`: `report.html` (the dashboard), `brief.md` (the pitch),
+`verdict.md` (go/no-go), `report.csv` (one row per review with its
+classification) and `report.json` (headline numbers).
 
 ### Classifying with Claude (optional)
 

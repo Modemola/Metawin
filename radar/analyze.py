@@ -15,6 +15,19 @@ SPIKE_RATIO = 2.5  # this week vs the average of the previous BASELINE_WEEKS
 BASELINE_WEEKS = 4
 
 
+def distinct_texts(items: list[Complaint], n: int) -> list[Complaint]:
+    """First n complaints whose text isn't a near-copy of one already picked."""
+    out, seen = [], set()
+    for c in items:
+        key = " ".join(c.text.lower().split())[:120]
+        if key not in seen:
+            seen.add(key)
+            out.append(c)
+            if len(out) == n:
+                break
+    return out
+
+
 def week_start(d: date) -> date:
     return d - timedelta(days=d.weekday())
 
@@ -48,7 +61,7 @@ class Report:
     def examples(self, category: str, n: int = 3) -> list[Complaint]:
         pool = [c for c in self.negatives if c.category == category]
         pool.sort(key=lambda c: (-c.severity, -(c.date.toordinal() if c.date else 0)))
-        return pool[:n]
+        return distinct_texts(pool, n)
 
 
 def analyze(items: list[Complaint]) -> Report:
@@ -131,3 +144,54 @@ def _find_spikes(weeks: list[date], weekly_by_cat: dict[str, dict[date, int]], d
                 spikes.append(Spike(w, cat, values[i], round(baseline, 1), promos))
     spikes.sort(key=lambda s: (s.week, s.count), reverse=True)
     return spikes
+
+
+# ------------------------------------------------------------- event comparison
+
+@dataclass
+class EventWindow:
+    """Complaints in the N days before vs after a dated event (e.g. a credit drop)."""
+
+    name: str
+    day: date
+    days: int
+    before: Counter  # category -> count
+    after: Counter
+    promos_after: Counter
+    after_items: list[Complaint]
+
+    @property
+    def total_before(self) -> int:
+        return sum(self.before.values())
+
+    @property
+    def total_after(self) -> int:
+        return sum(self.after.values())
+
+    def biggest_increases(self, n: int = 3) -> list[tuple[str, int, int]]:
+        rows = [(k, self.before.get(k, 0), self.after.get(k, 0)) for k in set(self.before) | set(self.after)]
+        rows = [r for r in rows if r[2] > r[1]]
+        rows.sort(key=lambda r: (r[2] - r[1], r[2]), reverse=True)
+        return rows[:n]
+
+
+def parse_event(spec: str) -> tuple[date, str]:
+    """'2026-10-20:Lossback drop' -> (date, name). The name is optional."""
+    day, _, name = spec.partition(":")
+    return date.fromisoformat(day.strip()), (name.strip() or f"Event on {day.strip()}")
+
+
+def compare_event(items: list[Complaint], day: date, name: str, days: int = 14) -> EventWindow:
+    """The event day counts as 'after': complaints about a drop start that day."""
+    neg = [c for c in items if c.is_negative and c.date]
+    before = [c for c in neg if day - timedelta(days=days) <= c.date < day]
+    after = [c for c in neg if day <= c.date < day + timedelta(days=days)]
+    return EventWindow(
+        name=name,
+        day=day,
+        days=days,
+        before=Counter(c.category for c in before),
+        after=Counter(c.category for c in after),
+        promos_after=Counter(p for c in after for p in c.promos),
+        after_items=sorted(after, key=lambda c: (-c.severity, c.date)),
+    )

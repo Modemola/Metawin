@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import date
 from html import escape
 
-from .analyze import Report
+from .analyze import EventWindow, Report, distinct_texts, week_start
 from .models import Complaint
 from .taxonomy import category_label
 
@@ -55,7 +55,7 @@ def _bar_chart(rows: list[tuple[str, int]], total: int) -> str:
     return "".join(out)
 
 
-def _line_chart(r: Report) -> str:
+def _line_chart(r: Report, events: list[EventWindow] | None = None) -> str:
     """Weekly negative-review count with spike weeks marked."""
     weeks = r.weeks
     if len(weeks) < 2:
@@ -75,7 +75,14 @@ def _line_chart(r: Report) -> str:
         out.append(f'<text x="{PAD - 6}" y="{y(v) + 4:.1f}" text-anchor="end" class="axis-label">{v:g}</text>')
     step = max(1, len(weeks) // 6)
     for i in range(0, len(weeks), step):
-        out.append(f'<text x="{x(i):.1f}" y="{LINE_H - 8}" text-anchor="middle" class="axis-label">{weeks[i].strftime("%d %b")}</text>')
+        anchor = "end" if x(i) > LINE_W - 40 else "middle"
+        out.append(f'<text x="{x(i):.1f}" y="{LINE_H - 8}" text-anchor="{anchor}" class="axis-label">{weeks[i].strftime("%d %b")}</text>')
+    for ev in events or []:
+        wk = week_start(ev.day)
+        if wk in weeks:
+            i = weeks.index(wk) + ev.day.weekday() / 7
+            out.append(f'<line x1="{x(i):.1f}" x2="{x(i):.1f}" y1="12" y2="{12 + ph}" class="event-line"/>'
+                       f'<text x="{x(i) + 4:.1f}" y="22" class="axis-label">{_e(ev.name)}</text>')
     pts = " ".join(f"{x(i):.1f},{y(v):.1f}" for i, v in enumerate(vals))
     out.append(f'<polyline points="{pts}" class="line"/>')
     colw = pw / (len(weeks) - 1)
@@ -119,7 +126,9 @@ def _heatmap(r: Report, cats: list[str]) -> str:
             )
     step = max(1, len(weeks) // 6)
     for wi in range(0, len(weeks), step):
-        out.append(f'<text x="{BAR_LABEL_W + wi * cell_w:.1f}" y="{h_total - 6}" class="axis-label">{weeks[wi].strftime("%d %b")}</text>')
+        anchor = "end" if wi > len(weeks) - 3 else "start"
+        xx = BAR_LABEL_W + (wi + 1) * cell_w - 2 if anchor == "end" else BAR_LABEL_W + wi * cell_w
+        out.append(f'<text x="{xx:.1f}" y="{h_total - 6}" text-anchor="{anchor}" class="axis-label">{weeks[wi].strftime("%d %b")}</text>')
     out.append("</svg></div>")
     legend = "".join(f'<span class="sw" style="background:{s}"></span>' for s in steps)
     return "".join(out) + f'<div class="legend"><span>0</span>{legend}<span>{top}+ per week</span></div>'
@@ -147,13 +156,26 @@ def _quote(c: Complaint) -> str:
     )
 
 
+def _event_section(ev: EventWindow) -> str:
+    cats = sorted(set(ev.before) | set(ev.after), key=lambda k: -(ev.after.get(k, 0) - ev.before.get(k, 0)))
+    rows = [[category_label(k), ev.before.get(k, 0), ev.after.get(k, 0), f"{ev.after.get(k, 0) - ev.before.get(k, 0):+d}"] for k in cats]
+    rows.append(["All negative reviews", ev.total_before, ev.total_after, f"{ev.total_after - ev.total_before:+d}"])
+    promos = ", ".join(f"{_e(p)} ({n})" for p, n in ev.promos_after.most_common(4)) or "none named"
+    quotes = "".join(_quote(c) for c in distinct_texts(ev.after_items, 2))
+    return (f'<section><h2>{_e(ev.name)}: before vs after</h2>'
+            f'<p class="muted">Negative reviews in the {ev.days} days before {ev.day:%d %b %Y} vs the {ev.days} days from that date. '
+            f'Promotions named afterwards: {promos}.</p>'
+            + _table(["Category", "Before", "After", "Change"], rows) + quotes + "</section>")
+
+
 def _table(headers: list[str], rows: list[list]) -> str:
     th = "".join(f"<th>{_e(h)}</th>" for h in headers)
     trs = "".join("<tr>" + "".join(f"<td>{_e(v)}</td>" for v in row) + "</tr>" for row in rows)
     return f'<div class="tablewrap"><table><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table></div>'
 
 
-def render(r: Report, replies: list[tuple[Complaint, str]], title: str = "Complaint Radar", sample: bool = False) -> str:
+def render(r: Report, replies: list[tuple[Complaint, str]], title: str = "Complaint Radar", sample: bool = False,
+           events: list[EventWindow] | None = None) -> str:
     s = r.stats
     neg = s["negative"] or 1
     cats = [k for k, _ in r.by_category]
@@ -194,6 +216,7 @@ def render(r: Report, replies: list[tuple[Complaint, str]], title: str = "Compla
         reply_html += f'<details><summary>{len(replies) - 3} more drafts</summary>{"".join(_reply(c, d) for c, d in replies[3:])}</details>'
     reply_html = reply_html or "<p class=muted>No unanswered negative reviews with reply data in this dataset.</p>"
 
+    event_html = "".join(_event_section(ev) for ev in events or [])
     weekly_rows = [[w.isoformat(), r.weekly_total[w]] + [r.weekly_by_category[c][w] for c in cats[:6]] for w in r.weeks]
     banner = '<div class="banner">SAMPLE DATA — every review in this report is synthetic, generated to test the layout. None of it is real MetaWin feedback.</div>' if sample else ""
     sources = ", ".join(f"{k} ({v})" for k, v in s["sources"].items())
@@ -218,9 +241,10 @@ def render(r: Report, replies: list[tuple[Complaint, str]], title: str = "Compla
 
 <section><h2>Early warning: spikes</h2><ul class="spikes">{spike_rows}</ul></section>
 
+{event_html}
 <section><h2>Negative reviews per week</h2>
 <p class="muted">Larger dots mark weeks where a category spiked.</p>
-{_line_chart(r)}
+{_line_chart(r, events)}
 <h3>By category and week</h3>
 {_heatmap(r, cats[:6])}
 <details class="tv"><summary>Table view</summary>{_table(["Week", "All"] + [category_label(c) for c in cats[:6]], weekly_rows)}</details>
@@ -259,7 +283,7 @@ section{background:var(--surface);border:1px solid var(--border);border-radius:1
 .tile-l{color:var(--ink);font-size:13px}.tile-n{color:var(--ink2);font-size:12px;margin-top:4px}
 .chartwrap{overflow-x:auto}.chart{width:100%;min-width:560px;height:auto;display:block;overflow:visible}.axis-label{fill:var(--ink2);font-size:12px}.value-label{fill:var(--ink);font-size:12px;font-variant-numeric:tabular-nums}
 .bar{fill:var(--s1)}.grid{stroke:var(--grid);stroke-width:1}.baseline{stroke:var(--base);stroke-width:1}.line{fill:none;stroke:var(--s1);stroke-width:2;stroke-linejoin:round}
-.dot{fill:var(--s1);stroke:var(--surface);stroke-width:2}.spike-dot{fill:var(--crit);stroke:var(--surface);stroke-width:2}
+.event-line{stroke:var(--ink2);stroke-width:1.5;stroke-dasharray:4 4}.dot{fill:var(--s1);stroke:var(--surface);stroke-width:2}.spike-dot{fill:var(--crit);stroke:var(--surface);stroke-width:2}
 .crosshair{stroke:var(--base);stroke-width:1;opacity:0}.hit:hover .crosshair{opacity:1}.hit:hover .bar{opacity:.85}.cell:hover{stroke:var(--ink);stroke-width:1.5}
 .legend{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--ink2);margin-top:6px;flex-wrap:wrap}.legend .sw{width:22px;height:12px;border-radius:3px;display:inline-block}
 .spikes{list-style:none;padding:0;margin:0}.spikes li{padding:8px 0;border-top:1px solid var(--border)}.spikes li:first-child{border-top:0}.status.warn{color:#b07a00}

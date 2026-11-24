@@ -110,3 +110,36 @@ def test_report_escapes_review_text_and_drafts_never_promise_money():
     assert "&lt;script&gt;" in html
     draft = queue[0][1].lower()
     assert "refund" not in draft and "we will credit" not in draft
+
+
+def test_event_window_counts_before_and_after():
+    items = [_c(date(2026, 10, 10), "withdrawal pending for days"),
+             _c(date(2026, 10, 20), "lossback never credited a"),
+             _c(date(2026, 10, 22), "lossback never credited b")]
+    classify.classify_rules(items)
+    ev = analyze.compare_event(items, *analyze.parse_event("2026-10-20:Lossback drop"))
+    assert ev.name == "Lossback drop"
+    assert ev.before == {"withdrawal": 1} and ev.after == {"promo_not_credited": 2}
+    assert ev.biggest_increases(1) == [("promo_not_credited", 0, 2)]
+    assert ev.promos_after["Lossback"] == 2
+
+
+def test_verdict_no_go_on_thin_data_and_brief_dedupes_quotes():
+    from radar import brief
+    items = [_c(date(2026, 11, d), "same lossback never credited text") for d in range(1, 6)]
+    rep = analyze.analyze(classify.classify_rules(items))
+    v = brief.assess(rep)
+    assert v.decision == "NO-GO" and not v.enough_data
+    md = brief.render_brief(rep, v, sample=True)
+    assert md.startswith("> **SAMPLE DATA")
+    assert md.count("same lossback never credited text") == 1  # identical texts quoted once
+
+
+def test_verdict_go_needs_volume_span_and_two_strong_findings():
+    from radar import brief
+    items = []
+    for d in range(0, 120, 2):  # 60 reviews over ~4 months, lossback-heavy, unanswered
+        day = date(2026, 7, 1) + __import__("datetime").timedelta(days=d)
+        items.append(_c(day, f"lossback never credited, support is a bot, no real person {d}"))
+    rep = analyze.analyze(classify.classify_rules(items))
+    assert brief.assess(rep).decision == "GO"

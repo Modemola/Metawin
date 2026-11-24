@@ -8,7 +8,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import analyze, classify, ingest, replies, report
+from . import analyze, brief, classify, ingest, replies, report
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -20,6 +20,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--title", default="Complaint Radar — MetaWin")
     ap.add_argument("--sample", action="store_true", help="Mark the report as synthetic sample data")
     ap.add_argument("--replies", type=int, default=15, help="How many reply drafts to include")
+    ap.add_argument("--event", action="append", default=[], metavar="YYYY-MM-DD:NAME",
+                    help="Compare complaints before/after a dated event, e.g. 2026-10-20:Lossback drop (repeatable)")
+    ap.add_argument("--window", type=int, default=14, help="Days before/after each --event (default 14)")
     args = ap.parse_args(argv)
 
     items = ingest.load(args.input)
@@ -34,6 +37,11 @@ def main(argv: list[str] | None = None) -> int:
     else:
         classify.classify_rules(items)
 
+    try:
+        events = [analyze.compare_event(items, *analyze.parse_event(e), days=args.window) for e in args.event]
+    except ValueError as e:
+        print(f"Bad --event value ({e}). Use YYYY-MM-DD:Name, e.g. 2026-10-20:Lossback drop", file=sys.stderr)
+        return 2
     rep = analyze.analyze(items)
     queue = replies.reply_queue(items, args.replies)
     if args.personalize_replies:
@@ -41,14 +49,19 @@ def main(argv: list[str] | None = None) -> int:
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(report.render(rep, queue, title=args.title, sample=args.sample), encoding="utf-8")
+    out.write_text(report.render(rep, queue, title=args.title, sample=args.sample, events=events), encoding="utf-8")
     _write_csv(items, out.with_suffix(".csv"))
     out.with_suffix(".json").write_text(json.dumps(rep.stats, default=str, indent=2))
+
+    verdict = brief.assess(rep, events)
+    out.with_name("brief.md").write_text(brief.render_brief(rep, verdict, sample=args.sample), encoding="utf-8")
+    out.with_name("verdict.md").write_text(brief.render_verdict(verdict), encoding="utf-8")
 
     s = rep.stats
     print(f"[radar] {s['negative']} negative of {s['total']}; top issues: "
           + ", ".join(f"{k} {n}" for k, n in rep.by_category[:3]), file=sys.stderr)
     print(f"[radar] {len(rep.spikes)} spike(s); report -> {out}", file=sys.stderr)
+    print(f"[radar] go/no-go: {verdict.decision} -> {out.with_name('verdict.md')}; pitch draft -> {out.with_name('brief.md')}", file=sys.stderr)
     return 0
 
 
