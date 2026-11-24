@@ -196,8 +196,13 @@ def assess(r: Report, events: list[EventWindow] | None = None) -> Verdict:
         + ("— enough to stand behind the numbers." if enough else f"— thin (want {MIN_NEGATIVE}+ over {MIN_SPAN_DAYS}+ days); collect more pages."),
         f"{len(strong)} strong finding(s): " + ("; ".join(f.headline for f in strong) if strong else "none") + ".",
     ]
-    if s["classified_by"].get("rules") == s["total"]:
-        reasons.append("Classified by keyword rules: spot-check the row-level CSV before quoting numbers.")
+    rules_share = s["classified_by"].get("rules", 0) / max(s["total"], 1)
+    if rules_share > 0.5:
+        reasons.append(
+            "Mostly classified by keyword rules, which scored 67% on a blind test of unseen phrasing (they miss "
+            "complaints into 'other' and can't read non-English). Before quoting percentages, check 100+ rows with "
+            "`radar label` and rerun with `--labels`, or classify with `--claude`."
+        )
 
     if enough and len(strong) >= 2:
         decision = "GO"

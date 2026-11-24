@@ -74,6 +74,10 @@ def test_csv(tmp_path):
 
 def test_rules_disambiguate_promo_vs_deposit():
     assert match_categories("Deposited $250 for the lossback offer. It was never credited.")[0] == "promo_not_credited"
+    # "lost it" = lost at the tables, not a lost deposit
+    assert match_categories("Deposited $250 for the 100% lossback offer, lost it and never got the lossback credited.")[0] == "promo_not_credited"
+    assert match_categories("Withdrawal was fast, but the fee ate 15% of it.")[0] == "fees"
+    assert match_categories("Fees are fine, the problem is my deposit of $750 never landed.")[0] == "deposit_missing"
     assert match_categories("Sent 0.2 ETH, transaction confirmed, deposit never credited.")[0] == "deposit_missing"
     assert match_categories("Fixed withdrawal fee is too much on small amounts.")[0] == "fees"
     assert match_categories("My withdrawal has been pending for 3 days.")[0] == "withdrawal"

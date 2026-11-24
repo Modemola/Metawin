@@ -89,10 +89,11 @@ The numbers in a pitch are only as good as the classification, so check it.
 The row-level `report.csv` has the same `id` and `category` columns, so
 correcting it in a spreadsheet also produces a valid labels file.
 
-`tests/fixtures/challenge_set.csv` is a blind challenge set of hand-written
-complaints, written without access to the rules, for measuring the
-classifier on phrasing it wasn't tuned on:
-`radar eval tests/fixtures/challenge_set.csv tests/fixtures/challenge_set.csv`.
+**How accurate are the keyword rules?** They scored **67% on a blind test**
+of complaint phrasing they had never seen. The usual failure is a real
+complaint landing in "Other". That's fine for trends, but check before quoting
+exact percentages. [`docs/ACCURACY.md`](docs/ACCURACY.md) has the full
+method, both test sets, and what the numbers do and don't mean.
 
 ## Early warning alerts (Slack / Discord)
 

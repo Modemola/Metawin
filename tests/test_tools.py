@@ -165,3 +165,13 @@ def test_cli_empty_input_returns_error(tmp_path):
     empty = tmp_path / "empty.txt"
     empty.write_text("nothing useful here")
     assert cli.main(["report", str(empty), "-o", str(tmp_path / "r.html")]) == 1
+
+
+def test_eval_does_not_apply_the_answers_before_scoring(tmp_path):
+    data = tmp_path / "d.csv"
+    data.write_text("id,date,rating,text\nx1,2026-11-01,1,my withdrawal is pending for days\n")
+    gold = tmp_path / "gold.csv"
+    gold.write_text("id,category\nx1,fairness\n")  # deliberately different from what the rules say
+    out = tmp_path / "eval.md"
+    assert cli.main(["eval", str(data), str(gold), "-o", str(out)]) == 0
+    assert "Accuracy: 0%" in out.read_text()

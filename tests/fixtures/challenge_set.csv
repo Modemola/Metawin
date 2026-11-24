@@ -1,0 +1,151 @@
+id,rating,text,category,promos,mentions_bot_support
+ch001,1,Lost 4k this week and my weekly lossback never showed up. Support just sends the same copy-paste message every time 'escalated to the relevant team'. Useless.,promo_not_credited,Lossback,true
+ch002,2,"withdrawal was instant ngl, but my rakeback from last week is missing. 0.00 in the WinBack tab",promo_not_credited,WinBack / Rakeback,false
+ch003,1,Ranked up to Gold on MetaMax and the rank-up reward never came. been 3 days,promo_not_credited,MetaMax rank rewards,false
+ch004,1,"won Skel's X giveaway, my username got announced on twitter and still no prize in my account after 2 weeks",promo_not_credited,X / username giveaway,false
+ch005,2,cash drop said claimed but balance didnt change lol,promo_not_credited,Cash Drop,false
+ch006,1,50 free spins from the promo just disappeared from my account when i logged back in,promo_not_credited,Free spins,false
+ch007,1,"Used a promo code on my deposit. Deposit went through fine, bonus never hit.",promo_not_credited,Promo code / deposit bonus,false
+ch008,1,they voided my lossback saying 'irregular play'. i played normal slots for a month. bs,promo_not_credited,Lossback,false
+ch009,2,"Finished 3rd in the weekly race, leaderboard literally showed $500 next to my name, nothing credited",promo_not_credited,Challenges / races,false
+ch010,1,Won the cash alternative in the competition. Email says it will be added to my balance 'shortly'. That was 6 weeks ago.,promo_not_credited,Prize draws / competitions,false
+ch011,1,My EARN affiliate commission has been showing 0 for a month even though 12 ppl signed up with my link,promo_not_credited,EARN affiliate,false
+ch012,2,Red Room bonus 'temporarily paused' for my account. Temporarily = 3 weeks apparently,promo_not_credited,Red Room,false
+ch013,1,rakeback gone after i withdrew. so you punish me for cashing out? nice,promo_not_credited,WinBack / Rakeback,false
+ch014,1,"i not receive my lossback of the week... support say wait 72h, now is 10 days. very dissapointed",promo_not_credited,Lossback,false
+ch015,1,"Great, another week, another 'lossback is being calculated'. Love it. Really feels like a VIP program.",promo_not_credited,Lossback,false
+ch016,1,"Daily challenge completed (100 spins on the featured slot), reward never paid. Fin the AI agent says it 'cant see' my progress. I want a human",promo_not_credited,Challenges / races,true
+ch017,2,free spins got put on a game thats not available in my country so basically i never got them,promo_not_credited,Free spins,false
+ch018,1,MetaMax says I should get 2% winback at Platinum. I get nothing. rakeback tab empty since the update,promo_not_credited,MetaMax rank rewards|WinBack / Rakeback,false
+ch019,1,"deposited 300 usdt specifically for the 100% deposit bonus, deposit arrived but the bonus was removed next day with no explanation",promo_not_credited,Promo code / deposit bonus,false
+ch020,2,"entered the X giveaway, retweeted, tagged 3 friends, won (they DMed me) and now they say my username doesnt match. it does.",promo_not_credited,X / username giveaway,false
+ch021,1,bonus balance wiped the moment i finished the wager requirement. coincidence? no,promo_not_credited,Promo code / deposit bonus,false
+ch022,3,"Mostly fine site but my cash drop from the stream code is still not in my balance, would be 5 stars otherwise",promo_not_credited,Cash Drop,false
+ch023,1,lossback AND rakeback both stopped for me after i won big once. cant reach anyone except a bot. classic,promo_not_credited,Lossback|WinBack / Rakeback,true
+ch024,2,"won 0.2 ETH in the weekly competition, email says 'credited', it is not in my balance",promo_not_credited,Prize draws / competitions,false
+ch025,1,my weekly winback was like $3 on $40k wagered. thats not rakeback thats a joke. and this week it didnt come at all,promo_not_credited,WinBack / Rakeback,false
+ch026,1,where is my rakeback??,promo_not_credited,WinBack / Rakeback,false
+ch027,1,withdrawl pending 5 days. 1.2k usdt. no reason given,withdrawal,,false
+ch028,1,"great, another 'pending' withdrawal, love it. third time this month",withdrawal,,false
+ch029,1,They cancelled my w/d of 0.5 ETH and put it back in my balance. Asked why - 'security review'. Deposits are instant tho,withdrawal,,false
+ch030,1,cashout blocked until i do KYC. funny how kyc was never needed when i was depositing $8k,withdrawal,,false
+ch031,2,"Withdrawal says completed and gave me a tx hash, but the hash doesnt exist on tronscan. USDT TRC20. so where is it",withdrawal,,false
+ch032,1,"won 2.3 SOL, requested payout, 'processing' for 48h. Solana takes seconds lol",withdrawal,,false
+ch033,1,"they asked for proof of address, source of funds, selfie, bank statement... all to release a $600 withdrawal. sent all of it, still pending",withdrawal,,false
+ch034,1,Withdraw to Base keeps failing with 'try again later'. been trying since tuesday,withdrawal,,false
+ch035,1,"My account got locked right after i requested a withdrawal of $3,400. funny timing",withdrawal,,false
+ch036,1,no withdraw for 9 days. support answer with bot message 'your request is with finance team'. no human ever,withdrawal,,true
+ch037,2,pending pending pending. 0.08 BTC. why does a 'crypto casino' need a week,withdrawal,,false
+ch038,1,"Fees on withdrawal are ok-ish, the real issue is my cashout has been 'under review' since the 3rd.",withdrawal,,false
+ch039,1,minimum withdrawal changed AFTER i requested so now its rejected?? give me my 40 usdt,withdrawal,,false
+ch040,1,"Won the competition, took the cash alternative, it hit my balance fine. Withdrawing it has been pending for 3 weeks.",withdrawal,Prize draws / competitions,false
+ch041,1,they reversed my withdrawal and said i need to wager my deposit 1x first. that was nowhere when i deposited,withdrawal,,false
+ch042,2,withdrawal took 4 days. not the end of the world but dont advertise 'instant' then,withdrawal,,false
+ch043,1,"Lossback came in fine, thanks, but my withdrawal of that lossback has been stuck since friday",withdrawal,Lossback,false
+ch044,1,"requested w/d to my Ledger ETH address, status 'sent', etherscan shows nothing from your hot wallet. 6 hrs",withdrawal,,false
+ch045,1,"my withdraw it is in pending since 1 week, i am verified level 2, why you are holding my money",withdrawal,,false
+ch046,3,"Games are fun and the draws are cool, but any withdrawal over $2k gets 'manually reviewed' and sits for days",withdrawal,Prize draws / competitions,false
+ch047,1,w/d stuck. again.,withdrawal,,false
+ch048,1,"deposited 200 usdt on tron, tx hash confirmed, balance still 0. been 4 hours",deposit_missing,,false
+ch049,1,"verified my account in 5 min, but deposit still not showing. 0.15 ETH sent yesterday",deposit_missing,,false
+ch050,1,"sent SOL to the deposit address shown, its gone from my wallet and not in my balance",deposit_missing,,false
+ch051,1,Deposit via Base never arrived. They say I used the wrong network. I used the network YOUR page told me to,deposit_missing,,false
+ch052,2,"my 50$ deposit not credited, i bought crypto with card on the site and money left my bank 2 days ago",deposit_missing,,false
+ch053,1,"deposited to get the deposit bonus, neither the deposit nor the bonus showed up",deposit_missing,Promo code / deposit bonus,false
+ch054,1,"1k usdt deposit missing. support asks me tx hash, I give, then they ask again. 3 times. it is a bot surely",deposit_missing,,true
+ch055,1,where is my deposit. 0.02 btc. 3 confirmations. nothing.,deposit_missing,,false
+ch056,2,"Deposit shows 'confirming' forever, the explorer says it was confirmed 300+ blocks ago",deposit_missing,,false
+ch057,1,"fees are fine whatever, the problem is my deposit of $750 never landed",deposit_missing,,false
+ch058,1,"deposited ETH, paid the gas, deposit not in my account. so i paid gas to donate to you?",deposit_missing,,false
+ch059,2,deposit still hasnt credited after 6 hours and the draw closes tonight. going to miss it,deposit_missing,Prize draws / competitions,false
+ch060,1,account closed for 'bonus abuse'. i claimed one welcome bonus. ONE.,account_restricted,Promo code / deposit bonus,false
+ch061,1,banned for multi accounting. my brother lives with me and has his own account. same wifi = ban apparently,account_restricted,,false
+ch062,1,"Account suspended with no email, no reason, nothing. Just a red 'your account has been restricted' banner",account_restricted,,false
+ch063,1,locked out after changing my wallet. support says account is 'under compliance review',account_restricted,,false
+ch064,1,they flagged me for multi-accounting because i used a VPN while traveling. been a customer 2 years,account_restricted,,false
+ch065,1,"self-excluded for 1 week, now 2 months later i still cant reopen my account",account_restricted,,false
+ch066,1,"my acc is disabled since i hit the red room jackpot. didnt even try to cash out, just straight ban",account_restricted,Red Room,false
+ch067,1,Got banned from the discord AND the site for complaining about rakeback on twitter. Pathetic,account_restricted,WinBack / Rakeback,false
+ch068,1,"cant log in, says account suspended. last thing i did was enter Skel's giveaway on X",account_restricted,X / username giveaway,false
+ch069,1,closed my account for 'irregular betting patterns'. i bet on slots. what is irregular,account_restricted,,false
+ch070,1,"acct frozen with $212 inside. no explanation, no timeline",account_restricted,,false
+ch071,1,"EARN affiliate account banned because 'self-referral'. I referred my coworkers, they are real people",account_restricted,EARN affiliate,false
+ch072,1,"account flagged as 'bonus hunter' and now i cant even place a bet, just a grey screen saying restricted",account_restricted,,false
+ch073,1,2FA reset request denied and account locked 'for your security'. so its gone basically,account_restricted,,false
+ch074,2,my account got suspended right after my MetaMax VIP host stopped replying. anyone else?,account_restricted,MetaMax rank rewards,false
+ch075,1,why do you need my passport AND utility bill AND a selfie just to play. other sites dont,kyc,,false
+ch076,1,"uploaded proof of address 4 times, rejected each time 'document unclear'. its a pdf straight from my bank",kyc,,false
+ch077,1,source of funds request after depositing $500 total. are you serious,kyc,,false
+ch078,2,KYC stuck on 'in review' 11 days,kyc,,false
+ch079,1,verification failed because my ID is from Nigeria? says unsupported document type,kyc,,false
+ch080,1,"they want a bank statement for crypto deposits, makes no sense, my funds come from my own wallet",kyc,,false
+ch081,2,level 3 verification asks for my payslip lol im self employed,kyc,,false
+ch082,1,"the verification keeps asking me for the selfie again and again, did it 6 times now",kyc,,false
+ch083,3,decent site but the ID check is overkill for a $20 competition ticket,kyc,Prize draws / competitions,false
+ch084,1,verify verify verify. sent everything. still 'additional documents required'. WHAT documents?? they dont say,kyc,,false
+ch085,1,rigged. 300 spins no bonus on a 96% rtp slot,fairness,,false
+ch086,1,never win anything here. never. 6 months.,fairness,,false
+ch087,1,"provably fair my ass, the server seed hash doesnt match when i verify it",fairness,,false
+ch088,1,"the competitions are fake, never seen a real winner, always some random username",fairness,Prize draws / competitions,false
+ch089,1,"dice is rigged, lost 14 in a row on 49.5%",fairness,,false
+ch090,3,"rtp here is lower than other casinos for the same slot. check game info, its 94 not 96.5",fairness,,false
+ch091,1,how is it that every time i have a big balance the games go cold. the algorithm knows,fairness,,false
+ch092,2,"i dont trust the draws, how is the winner picked? no proof shown, no blockchain link",fairness,Prize draws / competitions,false
+ch093,1,"Crash always busts at 1.0x when I bet big, never when I bet small",fairness,,false
+ch094,1,free spins always pay like 0.2x. designed to never hit,fairness,Free spins,false
+ch095,2,"lossback arrives every week fine, but thats because the slots are tuned to eat your balance in the first place",fairness,Lossback,false
+ch096,1,"changed client seed 10 times, same pattern of losses. provably fair is just marketing",fairness,,false
+ch097,1,$18 fee to withdraw $60 of usdt. on TRON. the fee is like $1 on chain,fees,,false
+ch098,1,"network fee on withdrawal is way higher than actual eth gas, you pocket the difference",fees,,false
+ch099,2,withdrawal was fast but the fee ate 15% of it,fees,,false
+ch100,2,"why is there a deposit fee when buying with card, not shown until the last step",fees,,false
+ch101,1,fees fees fees. every cashout costs me 5 bucks minimum,fees,,false
+ch102,3,ok platform but the btc withdrawal fee is silly for small amounts,fees,,false
+ch103,1,charged gas twice for one withdrawal??,fees,,false
+ch104,2,"hidden conversion fee when depositing SOL, credited less than the usd value i sent",fees,,false
+ch105,1,app crashes every time i open the competitions page,ux_bugs,Prize draws / competitions,false
+ch106,2,balance shows 0 after refresh then comes back. scared me half to death,ux_bugs,,false
+ch107,1,"site not loading on iphone safari, just a white screen",ux_bugs,,false
+ch108,1,game froze mid bonus round and when it reloaded the round was just gone,ux_bugs,,false
+ch109,3,the dark mode makes text unreadable on the wallet page lol,ux_bugs,,false
+ch110,1,"Login loop. enter 2fa, redirected to login, enter 2fa, redirected...",ux_bugs,,false
+ch111,2,Wallet connect with metamask keeps erroring 'request rejected' even when I approve,ux_bugs,,false
+ch112,2,"the race leaderboard doesnt update, stuck on yesterdays numbers",ux_bugs,Challenges / races,false
+ch113,2,Red Room page is just a spinner forever on chrome,ux_bugs,Red Room,false
+ch114,2,notifications pop up every 30 seconds and theres no way to turn them off,ux_bugs,,false
+ch115,1,"support is just a bot that sends links to the FAQ. ask for a human, it loops",support,,true
+ch116,1,waited 3 days on live chat for a simple question about my MetaMax tier,support,MetaMax rank rewards,false
+ch117,1,Fin the AI agent is the worst. 'I understand your frustration' x10. zero answers,support,,true
+ch118,1,discord support mods just say 'open a ticket'. ticket gets no reply,support,,false
+ch119,1,emailed support 4 times about changing my email address. zero replies,support,,false
+ch120,1,"responses are clearly copy-paste. asked about wagering requirements, got an answer about deposits",support,,true
+ch121,1,support agent was rude and closed my chat while i was still typing,support,,false
+ch122,1,is there an actual human working at metawin? every reply feels automated,support,,true
+ch123,2,"they reply in 24h which is ok but the answers dont help at all, just 'please be patient'",support,,false
+ch124,2,"asked how rakeback is calculated, support didnt know, told me to check X",support,WinBack / Rakeback,false
+ch125,1,"nobody answers on intercom. 'we typically reply in a few minutes' my ass, 2 days",support,,false
+ch126,1,the bot keeps closing my ticket as 'resolved'. its NOT resolved,support,,true
+ch127,2,"support only english, i dont speak good, they no help me with question about competition tickets",support,Prize draws / competitions,false
+ch128,1,Skel tweets about 'best support in crypto' and i cant get a reply in 3 days lmao,support,,false
+ch129,3,"games are good. support is slow as hell though, took a week to answer a question about my affiliate link",support,EARN affiliate,false
+ch130,1,3 tickets. no answer. hello??,support,,false
+ch131,5,Withdrew 0.4 ETH in like 2 minutes. Easily the fastest site ive used.,other,,false
+ch132,5,"won a watch in a prize draw, it arrived in 10 days, legit",other,Prize draws / competitions,false
+ch133,4,"lossback every monday like clockwork, good vibes",other,Lossback,false
+ch134,5,"a real human in live chat sorted my deposit question in 10 mins, respect",other,,false
+ch135,4,"Fun games, slick UI, and Skel's giveaways on X actually pay out",other,X / username giveaway,false
+ch136,5,rakeback + cash drops make this the best value casino imo,other,WinBack / Rakeback|Cash Drop,false
+ch137,4,"Smooth KYC, done in 5 minutes, first withdrawal same day",other,,false
+ch138,4,solid. red room is addictive lol,other,Red Room,false
+ch139,1,scam,other,,false
+ch140,1,worst site ever dont play,other,,false
+ch141,1,Gambling ruined my life and sites like this make it way too easy,other,,false
+ch142,2,"Too many marketing emails, unsubscribed 3 times and they keep coming",other,,false
+ch143,1,"DM me for guaranteed 10x crypto signals, telegram in bio",other,,false
+ch144,2,the ads on youtube are so annoying,other,,false
+ch145,3,its a casino. you lose money. what did you expect. 3 stars,other,,false
+ch146,2,"wish there were more table games, its mostly slots",other,,false
+ch147,1,"the nft roadmap went nowhere, holders were left holding nothing",other,,false
+ch148,2,Lost my whole paycheck in one night. Please add better deposit limits,other,,false
+ch149,1,Skel buys lambos while we lose. enough said,other,,false
+ch150,3,"Mid. Draws are fun, slots are average, nothing special",other,Prize draws / competitions,false

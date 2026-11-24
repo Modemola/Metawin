@@ -49,7 +49,9 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("eval", help="Score the classifier against a labels CSV")
     _common(p)
-    p.add_argument("labels", help="labels.csv with id,category[,promos,mentions_bot_support]")
+    # Deliberately not named "labels": that would make _load_and_classify apply
+    # the answers before scoring them.
+    p.add_argument("gold", metavar="LABELS", help="labels.csv with id,category[,promos,mentions_bot_support]")
     p.add_argument("-o", "--out", default="out/eval.md")
 
     p = sub.add_parser("label", help="Write a page for checking/correcting categories by hand")
@@ -123,7 +125,7 @@ def _report(args) -> int:
 
 
 def _eval(args) -> int:
-    gold = labels.load_labels(args.labels)
+    gold = labels.load_labels(args.gold)
     items = _load_and_classify(args)
     if items is None:
         return 1

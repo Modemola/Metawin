@@ -1,0 +1,121 @@
+id,rating,text,category,promos,mentions_bot_support
+ho001,1,pedem comprovante de residência em inglês?? i live in Brazil. my bills are in portuguese obviously,kyc,,false
+ho002,4,"Red Room perks are 🔥, host is responsive. would like lower w/d fees on ETH but overall great",other,Red Room,false
+ho003,1,they blocked my withdraw because rakeback 'needs wagering' first. wtf since when does rb have wagering,withdrawal,WinBack / Rakeback,false
+ho004,2,app crashes every time i open the slots lobby on iphone 15,ux_bugs,,false
+ho005,1,"won the X giveaway (they literally tagged me in the winners post) and 2 weeks later still no prize. DM'd the account, ignored. fake giveaways to farm followers?",promo_not_credited,X / username giveaway,false
+ho006,1,"Self-excluded for 3 months, now I want back and they say it's permanent. I NEVER chose permanent!!",account_restricted,,false
+ho007,1,"uploaded my passport 4 times, 'document unreadable' every time. it's a 4k photo",kyc,,false
+ho008,2,"competition 'winner' announced on X, I checked the wallet - it's funded by the house wallet. lol",fairness,Prize draws / competitions,false
+ho009,1,someone on telegram pretending to be MetaWin support DM'd me asking for my seed phrase. luckily I didn't. you should warn people,other,,false
+ho010,1,lossback didnt hit this week. lost 2.4k USDT on slots and got ZERO back. 3rd day asking in live chat and Fin keeps saying 'please wait for the team'. its a bot lol,promo_not_credited,Lossback,true
+ho011,2,"rakeback dropped from like $40/day to $0.80 overnight with no announcement?? im Platinum on MetaMax, nothing changed on my side. what happened",promo_not_credited,WinBack / Rakeback|MetaMax rank rewards,false
+ho012,1,"Konto gesperrt ohne Grund. account banned, no reason, no answer. danke für nichts",account_restricted,,false
+ho013,3,"Account got temporarily disabled after a password reset, security thing I guess. 2 days now. games and support otherwise fine but I'd like access back",account_restricted,,false
+ho014,2,login loop. enter 2FA -> back to login screen -> enter 2FA -> ...,ux_bugs,,false
+ho015,2,"I deposited SOL, solscan shows it going to the address you gave me, site shows nothing. ticket open, no reply 2 days",deposit_missing,,false
+ho016,1,FREE SPINS NOT CREDITED. 3 TIMES NOW.,promo_not_credited,Free spins,false
+ho017,2,card purchase through the on-ramp charged my bank 250€ but no crypto arrived on metawin. bank says paid. 3rd day,deposit_missing,,false
+ho018,1,lossback reduced to like 0.3% after I reached gold. so higher rank = less money? make it make sense,promo_not_credited,Lossback|MetaMax rank rewards,false
+ho019,1,they let me win and then wont let me withdraw. 'under review'. 2 weeks. rigged!!,withdrawal,,false
+ho020,5,"Withdrew 2.3 ETH, arrived in 6 minutes. no KYC drama, lossback hits every monday. best crypto casino i've used",other,Lossback,false
+ho021,1,crash always busts at 1.0x when I bet big. coincidence 10 times in a row?,fairness,,false
+ho022,2,withdrawal fee 25 USDT on ERC20 for a 100 USDT w/d. thats 25%,fees,,false
+ho023,1,"deposit took 10 seconds, withdrawal taking 10 days. classic.",withdrawal,,false
+ho024,2,VIP host stopped replying on telegram after I lost 20k. funny how fast they answer when you're depositing,support,,false
+ho025,1,"acc closed for 'multi accounting'. I live with my brother, he plays too. same wifi = criminals now?",account_restricted,,false
+ho026,1,"my acc got locked right after I deposited 2k and the deposit isnt even in my balance. so i cant see it, cant play, cant talk to anyone",deposit_missing,,false
+ho027,2,network fee on TRC20 is ~1 USDT on tron but you charge 6? where does the rest go,fees,,false
+ho028,1,COPY PASTE ANSWERS ONLY. talked to 'Maria' 'John' 'Alex' all same text word for word,support,,true
+ho029,4,Had a deposit delay once but support (a real human!) sorted it in 20 min. respect,other,,false
+ho030,1,withdrew 900 USDT TRC20 friday. on-chain it says confirmed TO A DIFFERENT ADDRESS. not mine. you guys got hacked or what,withdrawal,,false
+ho031,2,"how do I talk to a real person? there's no option, it's AI all the way down",support,,true
+ho032,1,"Hit Diamond 2 on MetaMax on friday, rank up reward never showed. screenshots sent. nada.",promo_not_credited,MetaMax rank rewards,false
+ho033,1,they banned me from discord AND the site for complaining about RTP in chat. great community,account_restricted,,false
+ho034,3,Usually deposits are instant and I like the games. This time my 200 USDT ERC20 deposit is missing for 2 days. Probably just a glitch but annoying,deposit_missing,,false
+ho035,4,"games are fair imo, the provably fair checker works, verified a few rounds myself. nice",other,,false
+ho036,1,flagged for bonus abuse when I literally used ONE promo code in a year. account disabled,account_restricted,Promo code / deposit bonus,false
+ho037,2,Red Room invite said weekly lossback is boosted for members. never saw a cent extra. VIP my ass,promo_not_credited,Red Room|Lossback,false
+ho038,1,"verification pending 9 days, level 2. cant play cant do anything",kyc,,false
+ho039,1,"w/d pending, w/d pending, w/d pending. thats all this site knows",withdrawal,,false
+ho040,3,"KYC was annoying but done in a day tbh. now they want SOF docs again 2 months later for no reason, hmm",kyc,,false
+ho041,5,EARN paid out my affiliate commission on time again. 3rd month in a row,other,EARN affiliate,false
+ho042,1,"Sent 500 USDT TRC20 6 hours ago, 40+ confirmations, balance still 0",deposit_missing,,false
+ho043,1,4% fee on card deposits?? not mentioned anywhere before,fees,,false
+ho044,1,charged an 'inactivity fee' on my balance after 2 months off. nobody told me,fees,,false
+ho045,1,"WITHDRAWAL MARKED AS SENT BUT NOTHING IN MY WALLET. tx hash they gave me doesnt exist on tronscan. 1,450 USDT TRC20.",withdrawal,,false
+ho046,3,"won a car in the comp, took the cash alternative. payout came but 3 weeks late. glad it arrived but the wait was rough",withdrawal,Prize draws / competitions,false
+ho047,2,"Every withdrawal over 1k now needs 'manual approval'. I've been here 2 years, never an issue, now 6 days and counting on 2.1k LTC",withdrawal,,false
+ho048,2,"VPN flagged, account restricted. I use a VPN for work, same country always. ridiculous",account_restricted,,false
+ho049,2,tried to cash out my free spins winnings (only 85$) and its blocked 'pending verification of bonus funds'. 85 dollars ffs,withdrawal,Free spins,false
+ho050,1,trash site trash games trash people,other,,false
+ho051,1,no support in spanish. they answered me with google translate garbage. soporte pésimo,support,,false
+ho052,2,"proof of address must be under 3 months, I sent a bank statement from last week and got rejected 'not accepted document type'",kyc,,false
+ho053,1,"BTC deposit 1 conf, 3 confs, 12 confs... still 'pending' on site. since this morning",deposit_missing,,false
+ho054,1,email support bounced back. discord mods say 'open a ticket'. ticket system says 'use live chat'. live chat says email. circle,support,,false
+ho055,1,"balance shows 0.00 then 1,203 then 0.00 again, refresh fixes it for 2 min. scary af",ux_bugs,,false
+ho056,3,"Mixed. withdrawals fast, no complaints there. but dice feels off, streaks of 12+ losses on 49% way too often",fairness,,false
+ho057,2,"the ads are everywhere on youtube now, so cringe. stop",other,,false
+ho058,1,support is a bot. 'Fin' can't do anything except say 'I've passed this on',support,,true
+ho059,1,asked for source of funds for a 300$ deposit. are you serious,kyc,,false
+ho060,1,"withdrawal history page is blank since the update. my w/d arrived fine, i just cant see any history or tx ids. bet history same",ux_bugs,,false
+ho061,2,withdraw stuck on 'processing'. chat bot says 'your request is being handled by our payments team'. 4 days. not a single human,withdrawal,,true
+ho062,1,w/d of 0.08 BTC pending 5 days,withdrawal,,false
+ho063,1,banned after winning 14k. never used a single bonus. everything frozen.,account_restricted,,false
+ho064,2,live chat closes the convo automatically if you don't reply within 2 minutes. i went to grab my passport. now back in queue at position 47,support,,false
+ho065,1,KYC KYC KYC. nobody asked for it when I was depositing,kyc,,false
+ho066,2,Withdrawal failed with 'network error' three times for SOL. other sites work fine with the same wallet,withdrawal,,false
+ho067,2,"page wont load on firefox, just the spinning logo",ux_bugs,,false
+ho068,1,Skel posts on X every day but I can't get one human from support to answer a simple question about my VIP host,support,,true
+ho069,5,"MetaMax rewards are actually good, rank-up bonus came instantly. free spins every week too 👍",other,MetaMax rank rewards|Free spins,false
+ho070,2,"Deposited to the old address still shown in my profile (from before the 'wallet upgrade'). funds left my wallet, never credited. Not my fault you kept the old address visible",deposit_missing,,false
+ho071,1,"my cashout got reversed when they asked for KYC. I did KYC, approved same day, and it's still reversed. now what",withdrawal,,false
+ho072,1,"Gewonnen! ticket shown as winner in the prize draw on the site, but the prize never came and support says I 'did not meet eligibility'. Changing the rules after the draw, super.",promo_not_credited,Prize draws / competitions,false
+ho073,2,"Requested 3,200 USDC on Base on Tuesday. Cancelled with no reason on Thursday, funds back in balance. Requested again, cancelled again. Is this a soft-ban?",withdrawal,,false
+ho074,2,"swap fee converting BTC to USDT inside the wallet is insane, 3% spread",fees,,false
+ho075,1,"deposit not credited!!! 0.3 ETH, tx confirmed on etherscan. live chat bot just sends me the same FAQ link over and over",deposit_missing,,true
+ho076,1,game froze mid bonus buy (200$ buy) and when it reloaded the feature was gone and the money taken,ux_bugs,,false
+ho077,2,"Telegram notif said 'rakeback claimed' but balance didnt change... ok it did, the widget just showed the old number for an hour. confusing UI",ux_bugs,WinBack / Rakeback,false
+ho078,1,lost 40 hands in a row on blackjack. 40. provably fair my ass,fairness,,false
+ho079,1,"deposit bonus 100% up to 1k promised on the banner. deposited 500 USDC on Polygon, the 500 got credited ok but the bonus is 0. support copy-paste: 'promotion terms apply'. which terms??",promo_not_credited,Promo code / deposit bonus,true
+ho080,2,Support agent was rude and closed my ticket as 'resolved' when nothing was resolved. it was just a question about changing my email,support,,false
+ho081,1,48 hrs they said. it's day 9. 😐 btc w/d,withdrawal,,false
+ho082,2,"commented my username under the giveaway post on X, got picked on stream, mod confirmed in discord. still waiting. 'soon' they say. soon = never",promo_not_credited,X / username giveaway,false
+ho083,1,"RTP on these slots is set way lower than the provider default, everyone on reddit says so. 96% my butt",fairness,,false
+ho084,1,50 free spins from the promo email just vanished from my account after i opened the game. never got to spin once.,promo_not_credited,Free spins,false
+ho085,1,"metamax rank page says I'm Bronze, profile says Gold. which one is it lol",ux_bugs,MetaMax rank rewards,false
+ho086,1,scam,other,,false
+ho087,1,🚀🚀 BEST SIGNALS GROUP join t.me/xxxpumps 1000x guaranteed,other,,false
+ho088,3,"Love the prize draws, won a small one last month! But the site has been super laggy lately, esp live tables",ux_bugs,Prize draws / competitions,false
+ho089,2,every time I up my bet the slot goes dead. drop back to 0.20 and suddenly bonus rounds. the algo is watching you,fairness,,false
+ho090,1,asked 3 simple questions about how lossback is calculated. 5 days. no answer from anyone,support,Lossback,false
+ho091,4,"solid. rakeback is decent, cash drops are fun. only wish there were more table games",other,WinBack / Rakeback|Cash Drop,false
+ho092,3,dark mode toggle resets every visit and the font is tiny on mobile. small stuff but annoying,ux_bugs,,false
+ho093,1,hidden fees everywhere,fees,,false
+ho094,1,"sacar mi dinero es imposible. retiro pendiente desde el viernes, 600 USDT ERC20. nadie responde.",withdrawal,,false
+ho095,3,"Fun site overall, games are smooth. But the challenge I completed (100x on a slot) still shows 'in progress' and no reward. Fix that and it's a 5.",promo_not_credited,Challenges / races,false
+ho096,1,prize draw winners are always the same 5 accounts or brand new accounts with 1 ticket. fake winners 100%,fairness,Prize draws / competitions,false
+ho097,5,Won a Lambo in the prize draw lmao. actually delivered. Skel is legit,other,Prize draws / competitions,false
+ho098,2,My account got frozen right after I asked about my lossback. coincidence? 🤔,account_restricted,Lossback,false
+ho099,2,server seed hash they show before the round doesnt match the revealed seed when I sha256 it myself. explain this,fairness,,false
+ho100,3,Games and payouts are fine honestly. Support is the weak point – answers take 2 days and half the time they don't read your message,support,,false
+ho101,1,"eth withdraw sent on the wrong network?? i picked ETH mainnet, they sent it on Base, now its in limbo",withdrawal,,false
+ho102,1,my EARN commission has been 'pending' for 6 weeks. 30+ referrals deposited. where is my money Skel??,promo_not_credited,EARN affiliate,false
+ho103,1,LOCKED OUT. 'account under review' for 11 days,account_restricted,,false
+ho104,1,they closed my account because I'm 'from a restricted region'. been playing from the same country for a year and they knew. at least say so before taking deposits,account_restricted,,false
+ho105,1,won a competition prize (the 0.5 ETH one) and they 'paused' it pending review. 19 days.,promo_not_credited,Prize draws / competitions,false
+ho106,2,cash drop code from telegram said 'claimed' but my balance didnt move. I typed it in like 4 seconds after it was posted,promo_not_credited,Cash Drop,false
+ho107,1,big win 7k -> withdrawal 'daily max' so I have to split it... and every split is pending 48h+. honestly feels like stalling,withdrawal,,false
+ho108,2,They want a selfie holding my ID AND a utility bill AND 6 months of bank statements. its a casino not a mortgage,kyc,,false
+ho109,2,"finished 3rd in the weekly wager race, leaderboard showed me there till the very end, then the prize went to someone else and I got nothing. explain please",promo_not_credited,Challenges / races,false
+ho110,1,"can't change client seed on plinko, field is locked. why would they block it unless..",fairness,,false
+ho111,1,where is my deposit 😡😡😡,deposit_missing,,false
+ho112,2,"rb used to come every day, now it's 'paused for maintenance' since monday. convenient",promo_not_credited,WinBack / Rakeback,false
+ho113,1,rigged,fairness,,false
+ho114,1,bot bot bot bot bot. i want a HUMAN,support,,true
+ho115,1,"they voided my bonus winnings for 'bonus abuse' AFTER I cleared the wagering. 1,180 USDT gone. acc still open tho lol",promo_not_credited,Promo code / deposit bonus,false
+ho116,1,"used the promo code when depositing, deposit went through fine but bonus = 0. 'code applied' message and everything. reaaally?",promo_not_credited,Promo code / deposit bonus,false
+ho117,3,"Decent casino, but the min withdrawal + flat fee combo kills small players. fee should scale",fees,,false
+ho118,2,"tried to log in: 'your account has been suspended, contact support'. no email, no reason. support says 'we can't share details'",account_restricted,,false
+ho119,2,"o rakeback sumiu da minha conta. had 212 usdt claimable yesterday, today 0 and says 'expired'. never heard of any expiry",promo_not_credited,WinBack / Rakeback,false
+ho120,1,dep'd 1000 USDC on Polygon to get the deposit bonus. neither the deposit nor the bonus showed up. double scam,deposit_missing,Promo code / deposit bonus,false
