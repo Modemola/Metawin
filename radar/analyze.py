@@ -93,7 +93,7 @@ def analyze(items: list[Complaint]) -> Report:
 
     rated = [c for c in items if c.rating]
     reply_known = [c for c in negatives if c.company_replied is not None]
-    support_related = [c for c in negatives if "support" in c.labels]
+    support_related = [c for c in negatives if "support" in c.labels or c.mentions_bot_support]
     authors = Counter(c.author_hash for c in negatives if c.author_hash)
     stats = {
         "total": len(items),

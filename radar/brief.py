@@ -113,7 +113,7 @@ def find(r: Report, events: list[EventWindow] | None = None) -> list[Finding]:
         # If that promo is mostly behind the top category already, say it once.
         if len(out) == 2 and out[0].key == "top_category" and specific[0][0] == cat and cc / c >= 0.6:
             top, promo = out
-            top.detail = f"{specific[0][1]} of {len(neg)} negative reviews. {p} alone is named in {c} of them ({_pct(c / n)} of all negative reviews)."
+            top.detail = f"{specific[0][1]} of {len(neg)} negative reviews. {p} alone is named in {cc} of them."
             top.strong = top.strong or promo.strong
             out.pop()
 
@@ -136,7 +136,7 @@ def find(r: Report, events: list[EventWindow] | None = None) -> list[Finding]:
         out.append(Finding(
             "bot_support",
             f"{bot} negative reviews say support is a bot or they couldn't reach a person",
-            f"That's {_pct(share)} of negative reviews and {_pct(bot / max(s['support_related'], 1))} of those mentioning support.",
+            f"That's {_pct(share)} of negative reviews, and {_pct(bot / max(s['support_related'], bot, 1))} of those about support.",
             strength=min(1.0, share / 0.2),
             strong=bot >= 10 and share >= 0.10,
             quotes=[c for c in neg if c.mentions_bot_support][:20],

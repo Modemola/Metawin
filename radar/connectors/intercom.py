@@ -92,21 +92,29 @@ def _search_ids(
     """Page through /conversations/search and yield up to `limit` unique ids."""
     seen: set[str] = set()
     cursor: str | None = None
-    while len(seen) < limit:
+    max_pages = limit // PER_PAGE + 10  # hard stop even if the API misbehaves
+    for _ in range(max_pages):
+        if len(seen) >= limit:
+            return
         pagination: dict[str, Any] = {"per_page": PER_PAGE}
         if cursor:
             pagination["starting_after"] = cursor
         body = {"query": search_query(since, until), "pagination": pagination}
         page = request_json("POST", f"{base_url}/conversations/search", headers=headers, body=body, auth_hint=AUTH_HINT)
+        before = len(seen)
         for conv in page.get("conversations") or []:
             conv_id = str(conv.get("id"))
             if conv_id not in seen and len(seen) < limit:
                 seen.add(conv_id)
                 yield conv_id
         log(f"intercom: searched {len(seen)} conversations so far")
-        cursor = ((page.get("pages") or {}).get("next") or {}).get("starting_after")
-        if not cursor:
+        next_cursor = ((page.get("pages") or {}).get("next") or {}).get("starting_after")
+        # Stop on the last page, a repeated cursor, or a page with nothing new:
+        # any of these would otherwise loop forever.
+        if not next_cursor or next_cursor == cursor or len(seen) == before:
             return
+        cursor = next_cursor
+    log(f"intercom: stopped after {max_pages} pages (safety limit)")
 
 
 def clean_conversation(conv: dict[str, Any]) -> dict[str, Any]:

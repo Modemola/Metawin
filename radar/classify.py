@@ -100,14 +100,24 @@ _SCHEMA = {
 }
 
 
-def _cache_key(c: Complaint) -> str:
-    return hashlib.sha256(f"{MODEL}\x1f{c.full_text}".encode()).hexdigest()
-
-
-def _system_prompt() -> str:
+def _build_system_prompt() -> str:
     cats = "\n".join(f"- {k}: {v['label']}" for k, v in CATEGORIES.items())
     promos = "\n".join(f"- {p}" for p in PROMOS)
     return SYSTEM_PROMPT.format(categories=cats, promos=promos)
+
+
+_SYSTEM = _build_system_prompt()
+_PROMPT_VERSION = hashlib.sha256((_SYSTEM + json.dumps(_SCHEMA, sort_keys=True)).encode()).hexdigest()[:12]
+
+
+def _cache_key(c: Complaint) -> str:
+    # Includes the prompt and schema: changing the categories or instructions
+    # must invalidate old answers instead of reusing them.
+    return hashlib.sha256(f"{MODEL}\x1f{_PROMPT_VERSION}\x1f{c.full_text}".encode()).hexdigest()
+
+
+def _system_prompt() -> str:
+    return _SYSTEM
 
 
 def classify_with_claude(items: list[Complaint], cache_path: Path = Path(".cache/classify.json")) -> list[Complaint]:
@@ -119,6 +129,7 @@ def classify_with_claude(items: list[Complaint], cache_path: Path = Path(".cache
     todo = [c for c in items if _cache_key(c) not in cache]
     client = anthropic.Anthropic()
     system = _system_prompt()
+    done = 0
 
     for start in range(0, len(todo), BATCH_SIZE):
         batch = todo[start : start + BATCH_SIZE]
@@ -153,23 +164,30 @@ def classify_with_claude(items: list[Complaint], cache_path: Path = Path(".cache
         except (json.JSONDecodeError, KeyError):
             print("[radar] unparseable batch; using rules", file=sys.stderr)
             continue
+        got = 0
         for r in results:
             try:
-                c = batch[int(r["id"])]
-            except (ValueError, IndexError, KeyError, TypeError):
+                idx = int(r["id"])
+            except (ValueError, KeyError, TypeError):
                 continue
+            if not 0 <= idx < len(batch):
+                continue  # "-1" would otherwise silently hit the last item
+            c = batch[idx]
             if r.get("category") not in CATEGORIES:
                 continue  # never let an unexpected value into the analysis
             r["other_categories"] = [x for x in r.get("other_categories", []) if x in CATEGORIES]
             r["promos"] = [x for x in r.get("promos", []) if x in PROMOS]
             cache[_cache_key(c)] = r
+            got += 1
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         cache_path.write_text(json.dumps(cache))
-        print(f"[radar] classified {min(start + BATCH_SIZE, len(todo))}/{len(todo)} with Claude", file=sys.stderr)
+        done += got
+        missing = f" ({len(batch) - got} unanswered, kept on rules)" if got < len(batch) else ""
+        print(f"[radar] Claude classified {done}/{len(todo)}{missing}", file=sys.stderr)
 
     for c in items:
         r = cache.get(_cache_key(c))
-        if not r:
+        if not r or r.get("category") not in CATEGORIES:
             continue
         c.category = r["category"]
         c.labels = [r["category"], *[x for x in r["other_categories"] if x != r["category"]]]

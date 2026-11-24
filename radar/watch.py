@@ -20,7 +20,7 @@ from datetime import date, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
 
-from .analyze import Report, Spike, distinct_texts
+from .analyze import Report, Spike, distinct_texts, week_start
 
 RECENT_WEEKS = 2  # only alert on spikes in the latest two weeks of data
 
@@ -40,7 +40,7 @@ def pending_alerts(rep: Report, state: dict, as_of: date | None = None) -> list[
     latest = as_of or rep.stats["date_to"]
     if not latest:
         return []
-    cutoff = latest - timedelta(weeks=RECENT_WEEKS)
+    cutoff = week_start(latest) - timedelta(weeks=RECENT_WEEKS - 1)
     alerts = []
     for sp in sorted(rep.spikes, key=lambda s: (s.week, -s.count)):
         key = _spike_key(sp)
@@ -66,11 +66,16 @@ def format_alert(rep: Report, sp: Spike) -> str:
 
 
 def payload_for(url: str, text: str) -> dict:
-    """Discord webhooks take {"content"} (max 2000 chars); Slack takes {"text"}."""
+    """Discord webhooks take {"content"} (max 2000 chars); Slack takes {"text"}.
+
+    Review text is untrusted: a review containing "@everyone", "<!channel>" or a
+    Slack link like "<https://evil|metawin.com>" must not ping the channel or
+    show a disguised link. Discord: disable all mentions. Slack: escape the
+    three control characters, which turns links and mentions into plain text."""
     host = urlparse(url).hostname or ""
     if host.endswith("discord.com") or host.endswith("discordapp.com"):
-        return {"content": text[:1990]}
-    return {"text": text}
+        return {"content": text[:1990], "allowed_mentions": {"parse": []}}
+    return {"text": text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}
 
 
 def post(url: str, text: str, retries: int = 3) -> None:

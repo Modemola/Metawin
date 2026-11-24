@@ -156,7 +156,12 @@ def _watch(args) -> int:
     url = os.environ.get(args.webhook_env)
     if not url and not args.dry_run:
         print(f"[radar] {args.webhook_env} is not set; printing alerts instead (use --dry-run to silence this).", file=sys.stderr)
-    sent = watch.run(analyze.analyze(items), Path(args.state), url, dry_run=args.dry_run)
+    try:
+        sent = watch.run(analyze.analyze(items), Path(args.state), url, dry_run=args.dry_run)
+    except OSError as e:  # URLError/HTTPError: never print the URL, it is a secret
+        print(f"[radar] could not deliver the alert ({type(e).__name__}: {getattr(e, 'code', '') or getattr(e, 'reason', '')}). "
+              "Nothing was marked as sent; it will be retried next run.", file=sys.stderr)
+        return 1
     print(f"[radar] {len(sent)} new alert(s)" + ("" if url and not args.dry_run else " (not posted)"), file=sys.stderr)
     return 0
 
@@ -170,6 +175,13 @@ def _fetch(argv: list[str]) -> int:
     return fetch_main(argv)
 
 
+def _cell(value) -> str:
+    """Neutralise spreadsheet formulas: review text like '=HYPERLINK(...)' must
+    stay text when the CSV is opened in Excel or Google Sheets."""
+    s = "" if value is None else str(value)
+    return "'" + s if s[:1] in ("=", "+", "-", "@", "\t", "\r") else s
+
+
 def write_csv(items: list[Complaint], path: Path) -> None:
     """Row-level export so the classification can be checked and corrected by hand.
     The id and category columns double as a labels file for `--labels` / `eval`."""
@@ -178,6 +190,7 @@ def write_csv(items: list[Complaint], path: Path) -> None:
         w.writerow(["id", "category", "promos", "mentions_bot_support", "source", "date", "rating", "labels", "severity",
                     "needs_human", "company_replied", "classified_by", "summary", "title", "text"])
         for c in items:
-            w.writerow([c.id, c.category, "|".join(c.promos), c.mentions_bot_support, c.source, c.date or "", c.rating or "",
-                        "|".join(c.labels), c.severity, c.needs_human,
-                        "" if c.company_replied is None else c.company_replied, c.classified_by, c.summary, c.title, c.text])
+            w.writerow([_cell(v) for v in (
+                c.id, c.category, "|".join(c.promos), c.mentions_bot_support, c.source, c.date or "", c.rating or "",
+                "|".join(c.labels), c.severity, c.needs_human,
+                "" if c.company_replied is None else c.company_replied, c.classified_by, c.summary, c.title, c.text)])

@@ -25,8 +25,25 @@ from .models import Complaint, hash_author, text_id
 _MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
 
-def parse_date(value: str | int | float | None, today: date | None = None) -> date | None:
-    """Parse the date formats these sources actually emit; None if unknown."""
+_RELATIVE = re.compile(r"\b(ago|today|yesterday|just now)\b", re.I)
+
+
+def is_relative_date(value: str) -> bool:
+    """'2 days ago' depends on when the page was copied, so it's approximate."""
+    return bool(_RELATIVE.search(value or ""))
+
+
+def parse_date(value: str | int | float | None, today: date | None = None, dayfirst: bool = False) -> date | None:
+    """Parse the date formats these sources actually emit; None if unknown or invalid.
+
+    Slash dates are month-first (11/12/2026 = 12 Nov) unless `dayfirst`."""
+    try:
+        return _parse_date(value, today, dayfirst)
+    except (ValueError, OverflowError, OSError):
+        return None  # e.g. "Nov 31, 2026" or 13/13/2026: undated beats crashing the run
+
+
+def _parse_date(value, today, dayfirst):
     if value is None or value == "":
         return None
     if isinstance(value, (int, float)):  # unix seconds (Intercom)
@@ -46,9 +63,11 @@ def parse_date(value: str | int | float | None, today: date | None = None) -> da
     m = re.match(r"^(\d{1,2})\s+([A-Za-z]{3})[a-z]*\.?,?\s+(\d{4})$", s)  # 12 Nov 2026
     if m and m[2].lower() in _MONTHS:
         return date(int(m[3]), _MONTHS.index(m[2].lower()) + 1, int(m[1]))
-    m = re.match(r"^(\d{1,2})/(\d{1,2})/(\d{4})$", s)  # 11/12/2026 (US order)
+    m = re.match(r"^(\d{1,2})[/.](\d{1,2})[/.](\d{4})$", s)  # 11/12/2026
     if m:
-        return date(int(m[3]), int(m[1]), int(m[2]))
+        a, b = int(m[1]), int(m[2])
+        day, month = (a, b) if dayfirst or a > 12 else (b, a)
+        return date(int(m[3]), month, day)
     m = re.match(r"^(\d+|an?|one)\s+(minute|hour|day|week|month)s?\s+ago$", s, re.I)
     if m:
         n = 1 if m[1].lower() in ("a", "an", "one") else int(m[1])
@@ -91,6 +110,7 @@ def _rating(line: str) -> int | None:
 _EXPERIENCE = re.compile(r"^Date of experience:?\s*(.+)$", re.I)
 _REVIEW_COUNT = re.compile(r"^\d+\s+reviews?$", re.I)
 _COUNTRY = re.compile(r"^[A-Z]{2}$")
+_NAME_LIKE = re.compile(r"^[^\W\d][\w'’.\- ]{0,38}$(?<![.!?,;:])", re.UNICODE)
 _NOISE = {"•", "·", "useful", "share", "report", "verified", "invited", "redirected", "see more", "read more", "unprompted review"}
 _BODY_END = re.compile(r"^(useful|share|report|reply from\b.*|see more|read more)$", re.I)
 
@@ -111,14 +131,20 @@ def parse_trustpilot_paste(raw: str, today: date | None = None) -> list[Complain
         Walks back over country / "N reviews" / bullet / initials lines; the line
         above them is taken as the name only when an "N reviews" line was seen,
         so body text of the previous review is never swallowed."""
-        j, saw_count = anchor - 1, False
+        j, saw_count, saw_country = anchor - 1, False, False
         while j > floor and (not lines[j] or _REVIEW_COUNT.match(lines[j]) or _COUNTRY.match(lines[j]) or lines[j].lower() in _NOISE):
             saw_count = saw_count or bool(_REVIEW_COUNT.match(lines[j]))
+            saw_country = saw_country or bool(_COUNTRY.match(lines[j]))
             j -= 1
-        # Only an "N reviews" line proves a profile header is here; a country
-        # code or initials alone could sit under any short body line.
-        if saw_count and j > floor and lines[j] and not _BODY_END.match(lines[j]) and len(lines[j]) <= 60:
-            return j, lines[j]
+        candidate = lines[j] if j > floor else ""
+        if not candidate or _BODY_END.match(candidate):
+            return j + 1, ""
+        # An "N reviews" line proves a profile header. A country code alone could
+        # sit under a body line, so then the line must also look like a name:
+        # short, few words, no sentence punctuation. Erring towards treating it as
+        # a name keeps reviewer names out of quoted text.
+        if (saw_count and len(candidate) <= 60) or (saw_country and _NAME_LIKE.match(candidate)):
+            return j, candidate
         return j + 1, ""
 
     heads = [header(a, anchors[k - 1] if k else -1) for k, a in enumerate(anchors)]
@@ -129,7 +155,7 @@ def parse_trustpilot_paste(raw: str, today: date | None = None) -> list[Complain
         rating = _rating(lines[start])
         author = heads[n][1]
 
-        review_date = None
+        review_date, approx_date = None, False
         replied = any(re.match(r"^reply from\b", ln, re.I) for ln in block)
         content: list[str] = []
         for ln in block:
@@ -137,14 +163,15 @@ def parse_trustpilot_paste(raw: str, today: date | None = None) -> list[Complain
                 continue
             m = _EXPERIENCE.match(ln)
             if m:
-                review_date = review_date or parse_date(m[1], today)
+                if review_date is None or approx_date:
+                    review_date, approx_date = parse_date(m[1], today) or review_date, False
                 continue
             if _BODY_END.match(ln):
                 break
             if not content and review_date is None:
                 d = parse_date(ln, today)
                 if d:
-                    review_date = d
+                    review_date, approx_date = d, is_relative_date(ln)
                     continue
             content.append(ln)
 
@@ -156,7 +183,9 @@ def parse_trustpilot_paste(raw: str, today: date | None = None) -> list[Complain
         title, body = content[0], "\n".join(content[1:])
         out.append(
             Complaint(
-                id=text_id("trustpilot", author, str(review_date), title, body),
+                # A relative date ("2 days ago") changes with the day the page was
+                # copied, so it can't be part of the identity used for de-duplication.
+                id=text_id("trustpilot", author, "" if approx_date else str(review_date), title, body),
                 source="trustpilot",
                 text=body or title,
                 title=title if body else "",
@@ -231,30 +260,42 @@ def parse_intercom_json(data: dict | list) -> list[Complaint]:
 
 # --------------------------------------------------------------------- CSV (generic)
 
+def _csv_rating(value: str) -> int | None:
+    """'5', '5.0' or '4.5' -> 1..5; anything else -> None."""
+    try:
+        r = round(float(value))
+    except (TypeError, ValueError):
+        return None
+    return r if 1 <= r <= 5 else None
+
+
 def parse_csv(path: Path) -> list[Complaint]:
     out = []
     with path.open(newline="", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f):
-            row = {k.strip().lower(): (v or "").strip() for k, v in row.items() if k}
-            text = row.get("text") or row.get("body") or row.get("message") or row.get("content") or ""
-            if not text:
-                continue
-            source = row.get("source") or "csv"
-            rating = row.get("rating") or row.get("stars")
-            replied = row.get("company_replied") or row.get("replied")
-            out.append(
-                Complaint(
-                    id=row.get("id") or text_id(source, text),
-                    source=source,
-                    text=text,
-                    title=row.get("title", ""),
-                    date=parse_date(row.get("date") or row.get("created_at")),
-                    rating=int(rating) if rating and rating.isdigit() else None,
-                    author_hash=hash_author(row.get("author", "")),
-                    url=row.get("url", ""),
-                    company_replied=None if not replied else replied.lower() in ("1", "true", "yes", "y"),
-                )
+        rows = [{k.strip().lower(): (v or "").strip() for k, v in row.items() if k} for row in csv.DictReader(f)]
+    # Day-first if any slash date in the file can only be day-first (13/11/2026).
+    slash = [re.match(r"^(\d{1,2})[/.](\d{1,2})[/.]\d{4}$", r.get("date") or r.get("created_at") or "") for r in rows]
+    dayfirst = any(m and int(m[1]) > 12 for m in slash)
+    for row in rows:
+        text = row.get("text") or row.get("body") or row.get("message") or row.get("content") or ""
+        if not text:
+            continue
+        source = row.get("source") or "csv"
+        rating = row.get("rating") or row.get("stars")
+        replied = row.get("company_replied") or row.get("replied")
+        out.append(
+            Complaint(
+                id=row.get("id") or text_id(source, text),
+                source=source,
+                text=text,
+                title=row.get("title", ""),
+                date=parse_date(row.get("date") or row.get("created_at"), dayfirst=dayfirst),
+                rating=_csv_rating(rating) if rating else None,
+                author_hash=hash_author(row.get("author", "")),
+                url=row.get("url", ""),
+                company_replied=None if not replied else replied.lower() in ("1", "true", "yes", "y"),
             )
+        )
     return out
 
 

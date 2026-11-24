@@ -11,7 +11,7 @@ import re
 _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}")
 # Candidate phone: optional "+", digits with space/hyphen/parenthesis separators.
 # Dots are not separators so crypto amounts like 0.00012345 survive.
-_PHONE = re.compile(r"(?<![\w.])\+?\(?\d[\d ()-]{7,}\d(?![\w.])")
+_PHONE = re.compile(r"(?<![\w.])\+?\(?\d[\d ()-]{7,}\d(?!\w|\.\d)")
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 

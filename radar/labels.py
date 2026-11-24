@@ -145,7 +145,10 @@ def render_label_page(items: list[Complaint], title: str = "Label complaints") -
     rows = [{"id": c.id, "cat": c.category, "promos": c.promos, "bot": c.mentions_bot_support,
              "rating": c.rating, "date": c.date.isoformat() if c.date else "", "text": c.full_text[:1500]}
             for c in items if c.is_negative]
-    data = json.dumps({"rows": rows, "cats": cats, "promos": list(PROMOS)}).replace("</", "<\\/")
+    # Escape <, > and & so no review text can end the <script> block or switch the
+    # HTML parser into a comment/escaped mode ("<!--<script>").
+    data = (json.dumps({"rows": rows, "cats": cats, "promos": list(PROMOS)})
+            .replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026"))
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)}</title>
 <style>
