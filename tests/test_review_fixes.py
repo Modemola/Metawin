@@ -34,6 +34,8 @@ def test_alert_payload_cannot_ping_or_disguise_links():
     evil = '<!channel> withdraw now at <https://evil.example|metawin.com/support> & @everyone'
     slack = watch.payload_for("https://hooks.slack.com/services/x", evil)["text"]
     assert "<" not in slack and ">" not in slack and "&lt;!channel&gt;" in slack and "&amp;" in slack
+    quoted = watch.payload_for("https://hooks.slack.com/services/x", 'Spike\n> "' + evil + '"')["text"]
+    assert quoted.split("\n")[1].startswith('> "&lt;!channel&gt;')  # our blockquote kept, their markup escaped
     discord = watch.payload_for("https://discord.com/api/webhooks/1/x", evil)
     assert discord["allowed_mentions"] == {"parse": []}
 

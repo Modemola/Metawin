@@ -75,7 +75,11 @@ def payload_for(url: str, text: str) -> dict:
     host = urlparse(url).hostname or ""
     if host.endswith("discord.com") or host.endswith("discordapp.com"):
         return {"content": text[:1990], "allowed_mentions": {"parse": []}}
-    return {"text": text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}
+    safe = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    # Restore our own quote markers. Review text is collapsed onto one line inside
+    # quotes by format_alert, so it can never start a line with ">" itself.
+    safe = "\n".join("> " + ln[5:] if ln.startswith("&gt; ") else ln for ln in safe.split("\n"))
+    return {"text": safe}
 
 
 def post(url: str, text: str, retries: int = 3) -> None:
