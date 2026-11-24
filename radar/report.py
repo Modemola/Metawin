@@ -86,7 +86,7 @@ def _line_chart(r: Report, events: list[EventWindow] | None = None) -> str:
     pts = " ".join(f"{x(i):.1f},{y(v):.1f}" for i, v in enumerate(vals))
     out.append(f'<polyline points="{pts}" class="line"/>')
     colw = pw / (len(weeks) - 1)
-    for i, (w, v) in enumerate(zip(weeks, vals)):
+    for i, (w, v) in enumerate(zip(weeks, vals, strict=True)):
         spiking = [s for s in r.spikes if s.week == w]
         tip = f"Week of {w.strftime('%d %b %Y')}: {v} negative reviews"
         if spiking:

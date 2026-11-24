@@ -6,3 +6,6 @@ __pycache__/
 out/
 # Real collected reviews stay local by default
 data/
+
+# Local agent/editor state
+.claude/

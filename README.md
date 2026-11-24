@@ -48,10 +48,10 @@ clear jump becomes the lead finding in `brief.md`.
 python3 -m venv .venv && .venv/bin/pip install -e ".[claude,dev]"
 
 # Try it on synthetic data (clearly marked as such in the report)
-.venv/bin/python -m radar samples/synthetic_trustpilot.txt -o out/sample_report.html --sample
+.venv/bin/python -m radar report samples/synthetic_trustpilot.txt -o out/sample_report.html --sample
 
 # Real data: put files in data/ (any mix of .txt / .json / .csv)
-.venv/bin/python -m radar data/ -o out/report.html
+.venv/bin/python -m radar report data/ -o out/report.html
 ```
 
 Outputs, all in `out/`: `report.html` (the dashboard), `brief.md` (the pitch),
@@ -67,6 +67,46 @@ Results are cached in `.cache/`, so re-running never pays twice for the same
 review. `--personalize-replies` also has Claude adapt each reply draft to its
 review. If no key is set, both options fall back to the rules and templates.
 
+## Checking accuracy before quoting numbers
+
+The numbers in a pitch are only as good as the classification, so check it.
+
+```bash
+# 1. Write a labelling page. Open it in a browser, correct any wrong
+#    categories, tick "Checked", then click "Download labels.csv".
+.venv/bin/python -m radar label data/ -o out/label.html
+
+# 2. Measure the classifier against your labels: accuracy, per-category
+#    precision/recall, the most common confusions, and every mistake.
+.venv/bin/python -m radar eval data/ labels.csv
+.venv/bin/python -m radar eval data/ labels.csv --claude   # compare with Claude
+
+# 3. Build the report with your labels applied. The checked rows override
+#    the classifier, so the brief quotes checked data.
+.venv/bin/python -m radar report data/ --labels labels.csv
+```
+
+The row-level `report.csv` has the same `id` and `category` columns, so
+correcting it in a spreadsheet also produces a valid labels file.
+
+`tests/fixtures/challenge_set.csv` is a blind challenge set of hand-written
+complaints, written without access to the rules, for measuring the
+classifier on phrasing it wasn't tuned on:
+`radar eval tests/fixtures/challenge_set.csv tests/fixtures/challenge_set.csv`.
+
+## Early warning alerts (Slack / Discord)
+
+```bash
+export RADAR_WEBHOOK_URL="https://hooks.slack.com/services/..."   # or a Discord webhook URL
+.venv/bin/python -m radar watch data/            # posts each new spike once
+.venv/bin/python -m radar watch data/ --dry-run  # print instead of posting
+```
+
+Run it on a schedule against fresh data (see the connectors below). It only
+alerts on spikes in the latest two weeks of data, and remembers what it has
+sent in `.cache/watch_state.json`, so nothing is announced twice. The webhook
+URL is read from an environment variable, never from the command line.
+
 ## Collecting Trustpilot reviews
 
 Trustpilot blocks automated scraping, so collect reviews in a normal browser:
@@ -79,8 +119,10 @@ Trustpilot blocks automated scraping, so collect reviews in a normal browser:
    Repeat for more pages. Pages can go in one file or several, and duplicates
    are removed automatically.
 
-The parser finds each review by its "Rated N out of 5 stars" line and detects
-"Reply from MetaWin" blocks, which is how it calculates the public reply rate.
+The parser finds each review by its rating line ("Rated 1 out of 5 stars",
+"1 out of 5 stars", "Rating: 1/5" or ★☆☆☆☆) and detects "Reply from MetaWin"
+blocks, which is how it calculates the public reply rate. If a review shows
+"See more", expand it before copying, or only the shortened text is captured.
 
 ## Supported inputs
 

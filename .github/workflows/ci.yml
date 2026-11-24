@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check radar tests samples
+      - run: pytest -q
+      - name: Smoke test on synthetic data
+        run: |
+          python samples/make_sample.py > /tmp/sample.txt
+          python -m radar report /tmp/sample.txt -o /tmp/out/report.html --sample --event "2026-10-24:Lossback drop"
+          test -s /tmp/out/report.html && test -s /tmp/out/brief.md && grep -q "Do not send" /tmp/out/brief.md

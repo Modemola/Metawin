@@ -22,7 +22,7 @@ from .models import Complaint, hash_author, text_id
 
 # --------------------------------------------------------------------------- dates
 
-_MONTHS = "jan feb mar apr may jun jul aug sep oct nov dec".split()
+_MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
 
 def parse_date(value: str | int | float | None, today: date | None = None) -> date | None:
@@ -32,6 +32,9 @@ def parse_date(value: str | int | float | None, today: date | None = None) -> da
     if isinstance(value, (int, float)):  # unix seconds (Intercom)
         return datetime.fromtimestamp(value, tz=timezone.utc).date()
     s = str(value).strip()
+    # "Updated Nov 12, 2026", "Nov 12, 2026 · Edited", "Posted 2 days ago"
+    s = re.sub(r"^(updated|edited|posted|reviewed)\s+", "", s, flags=re.I)
+    s = re.sub(r"\s*[·•|-]\s*(updated|edited)$", "", s, flags=re.I).strip()
     today = today or date.today()
 
     m = re.match(r"^(\d{4})-(\d{2})-(\d{2})", s)  # ISO
@@ -65,7 +68,26 @@ def _strip_html(s: str) -> str:
 
 # --------------------------------------------------------- Trustpilot (pasted text)
 
-_RATED = re.compile(r"^Rated\s+([1-5])\s+out of\s+5\s+stars?$", re.I)
+# Rating line variants seen when copying a review page: the image alt text
+# ("Rated 1 out of 5 stars"), screen-reader text without "Rated", a "1/5"
+# form, or the stars themselves as characters.
+_RATED = re.compile(
+    r"^(?:Rated\s+)?([1-5])\s+out of\s+5(?:\s+stars?)?\.?$"
+    r"|^Rating:?\s*([1-5])\s*/\s*5$"
+    r"|^(★{1,5})[☆✩✰\s]*$",
+    re.I,
+)
+
+
+def _rating(line: str) -> int | None:
+    m = _RATED.match(line)
+    if not m:
+        return None
+    if m[3]:
+        return len(m[3])
+    return int(m[1] or m[2])
+
+
 _EXPERIENCE = re.compile(r"^Date of experience:?\s*(.+)$", re.I)
 _REVIEW_COUNT = re.compile(r"^\d+\s+reviews?$", re.I)
 _COUNTRY = re.compile(r"^[A-Z]{2}$")
@@ -81,28 +103,30 @@ def parse_trustpilot_paste(raw: str, today: date | None = None) -> list[Complain
     a "Reply from <company>" block marks that the company answered.
     """
     lines = [ln.strip() for ln in raw.splitlines()]
-    anchors = [i for i, ln in enumerate(lines) if _RATED.match(ln)]
+    anchors = [i for i, ln in enumerate(lines) if _rating(ln)]
 
     def header(anchor: int, floor: int) -> tuple[int, str]:
         """(index where this review's header starts, reviewer name).
 
-        Walks back over country / "N reviews" / bullet lines; only if at least
-        one of those markers is present is the line above them taken as the
-        name, so body text of the previous review is never swallowed."""
-        j, saw_marker = anchor - 1, False
+        Walks back over country / "N reviews" / bullet / initials lines; the line
+        above them is taken as the name only when an "N reviews" line was seen,
+        so body text of the previous review is never swallowed."""
+        j, saw_count = anchor - 1, False
         while j > floor and (not lines[j] or _REVIEW_COUNT.match(lines[j]) or _COUNTRY.match(lines[j]) or lines[j].lower() in _NOISE):
-            saw_marker = saw_marker or bool(lines[j])
+            saw_count = saw_count or bool(_REVIEW_COUNT.match(lines[j]))
             j -= 1
-        if saw_marker and j > floor and lines[j] and not _BODY_END.match(lines[j]) and len(lines[j]) <= 60:
+        # Only an "N reviews" line proves a profile header is here; a country
+        # code or initials alone could sit under any short body line.
+        if saw_count and j > floor and lines[j] and not _BODY_END.match(lines[j]) and len(lines[j]) <= 60:
             return j, lines[j]
-        return anchor, ""
+        return j + 1, ""
 
     heads = [header(a, anchors[k - 1] if k else -1) for k, a in enumerate(anchors)]
     out: list[Complaint] = []
     for n, start in enumerate(anchors):
         end = heads[n + 1][0] if n + 1 < len(anchors) else len(lines)
         block = lines[start + 1 : end]
-        rating = int(_RATED.match(lines[start])[1])
+        rating = _rating(lines[start])
         author = heads[n][1]
 
         review_date = None
@@ -124,6 +148,9 @@ def parse_trustpilot_paste(raw: str, today: date | None = None) -> list[Complain
                     continue
             content.append(ln)
 
+        # Profile initials / country of the next reviewer when no "Useful" line ended the body.
+        while content and _COUNTRY.match(content[-1]):
+            content.pop()
         if not content:
             continue
         title, body = content[0], "\n".join(content[1:])
