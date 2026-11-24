@@ -124,6 +124,35 @@ The parser finds each review by its rating line ("Rated 1 out of 5 stars",
 blocks, which is how it calculates the public reply rate. If a review shows
 "See more", expand it before copying, or only the shortened text is captured.
 
+## Connecting to live data (pilot)
+
+A company that agrees to a pilot can run the tool on its own data with just an
+API token. Tokens are read from environment variables only, never from
+command-line arguments, so they don't end up in shell history.
+
+```bash
+# Intercom support conversations created since a date (--until is optional)
+export INTERCOM_TOKEN=...          # Intercom access token with "read conversations"
+.venv/bin/python -m radar fetch intercom --since 2026-08-01 --out data/intercom.json
+
+# Trustpilot reviews for the company's own profile
+export TRUSTPILOT_API_KEY=...      # Trustpilot API key for the business's own profile
+.venv/bin/python -m radar fetch trustpilot --domain metawin.com --out data/trustpilot.json
+# or skip the domain lookup: --business-unit-id <id>
+
+.venv/bin/python -m radar data/ -o out/report.html
+```
+
+- **Intercom** needs an access token (Developer Hub app) with the
+  *read conversations* permission. A 401/403 means the token lacks it.
+- **Trustpilot** needs an API key issued for the business's own Trustpilot
+  profile.
+- `--max` caps how many conversations or reviews are downloaded (default
+  5000). Rate limits (HTTP 429) and server errors are retried automatically.
+- Nothing that identifies a player is written to disk: Intercom contacts and
+  author names/emails and Trustpilot reviewer names are dropped, and email
+  addresses and phone numbers inside messages become `[email]` / `[phone]`.
+
 ## Supported inputs
 
 | Input | How it's detected |

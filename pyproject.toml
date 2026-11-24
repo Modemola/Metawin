@@ -13,7 +13,7 @@ dev = ["pytest", "ruff"]
 radar = "radar.cli:main"
 
 [tool.setuptools]
-packages = ["radar"]
+packages = ["radar", "radar.connectors"]
 
 [tool.ruff]
 line-length = 140
