@@ -4,7 +4,8 @@
     python -m radar eval DATA LABELS.csv      measure the classifier against human labels
     python -m radar label DATA                write a page for labelling complaints by hand
     python -m radar watch DATA                post Slack/Discord alerts for new spikes
-    python -m radar fetch intercom|trustpilot pull a company's own data via its API
+    python -m radar fetch intercom|trustpilot|bitcointalk   pull data from an API or public forum
+    python -m radar verify-quotes DOC DATA    check every quote in DOC appears verbatim in DATA
 
 `python -m radar DATA ...` (no subcommand) still means `report`.
 """
@@ -21,7 +22,7 @@ from pathlib import Path
 from . import analyze, brief, classify, ingest, labels, replies, report, watch
 from .models import Complaint
 
-COMMANDS = ("report", "eval", "label", "watch", "fetch")
+COMMANDS = ("report", "eval", "label", "watch", "fetch", "verify-quotes")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -65,9 +66,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--state", default=".cache/watch_state.json", help="Remembers which spikes were already sent")
     p.add_argument("--dry-run", action="store_true", help="Print alerts instead of posting them")
 
+    p = sub.add_parser("verify-quotes", help="Check every quote in a document appears verbatim in the data")
+    p.add_argument("document", help="Markdown/text file, e.g. out/brief.md")
+    p.add_argument("input", help="The data the quotes should come from (file or folder)")
+
     args = ap.parse_args(argv)
     try:
-        return {"report": _report, "eval": _eval, "label": _label, "watch": _watch}[args.cmd](args)
+        return {"report": _report, "eval": _eval, "label": _label, "watch": _watch, "verify-quotes": _verify}[args.cmd](args)
     except (labels.LabelError, ValueError) as e:
         print(f"[radar] {e}", file=sys.stderr)
         return 2
@@ -164,6 +169,18 @@ def _watch(args) -> int:
         return 1
     print(f"[radar] {len(sent)} new alert(s)" + ("" if url and not args.dry_run else " (not posted)"), file=sys.stderr)
     return 0
+
+
+def _verify(args) -> int:
+    from .verify import check_quotes
+
+    items = ingest.load(args.input)
+    results = check_quotes(Path(args.document).read_text(encoding="utf-8"), items)
+    bad = [r for r in results if not r.found_in]
+    for r in bad:
+        print(f'[radar] NOT FOUND: "{r.quote}"', file=sys.stderr)
+    print(f"[radar] {len(results) - len(bad)}/{len(results)} quotes found verbatim in {args.input}", file=sys.stderr)
+    return 1 if bad else 0
 
 
 def _fetch(argv: list[str]) -> int:

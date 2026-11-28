@@ -95,6 +95,17 @@ complaint landing in "Other". That's fine for trends, but check before quoting
 exact percentages. [`docs/ACCURACY.md`](docs/ACCURACY.md) has the full
 method, both test sets, and what the numbers do and don't mean.
 
+## Before anything leaves your hands: check the quotes
+
+```bash
+.venv/bin/python -m radar verify-quotes out/brief.md data/
+```
+
+Every quotation (text in double quotes) must appear word for word in the
+source data. An ellipsis (…) marks a cut, and the pieces must appear in order
+in the same post. The command lists any quote it can't find and exits non-zero,
+so a misquote can't slip into a pitch.
+
 ## Early warning alerts (Slack / Discord)
 
 ```bash

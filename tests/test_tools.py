@@ -175,3 +175,26 @@ def test_eval_does_not_apply_the_answers_before_scoring(tmp_path):
     out = tmp_path / "eval.md"
     assert cli.main(["eval", str(data), str(gold), "-o", str(out)]) == 0
     assert "Accuracy: 0%" in out.read_text()
+
+
+def test_verify_quotes_flags_misquotes(tmp_path):
+    from radar.verify import check_quotes
+
+    items = [_c(1, "My withdrawal has been pending for nine days and support never answers."),
+             _c(2, "The lossback promo said up to $1k. Mine was never credited.")]
+    doc = ('Player: "pending for nine days and support never answers" fine. '
+           'Cut: "The lossback promo … never credited" ok. '
+           'Wrong order: "never credited … The lossback promo" bad. '
+           'Invented: "support was rude and hung up on me" bad.')
+    res = {r.quote: r.found_in for r in check_quotes(doc, items)}
+    assert res["pending for nine days and support never answers"] == "t:1"
+    assert res["The lossback promo … never credited"] == "t:2"
+    assert res["never credited … The lossback promo"] is None
+    assert res["support was rude and hung up on me"] is None
+    data = tmp_path / "d.csv"
+    data.write_text("id,date,rating,text\nx1,2026-11-01,1,my deposit never arrived after three days\n")
+    good, bad = tmp_path / "good.md", tmp_path / "bad.md"
+    good.write_text('He said "my deposit never arrived".')
+    bad.write_text('He said "my deposit vanished into thin air".')
+    assert cli.main(["verify-quotes", str(good), str(data)]) == 0
+    assert cli.main(["verify-quotes", str(bad), str(data)]) == 1
