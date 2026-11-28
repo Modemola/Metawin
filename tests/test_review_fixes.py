@@ -6,7 +6,7 @@ import json
 from datetime import date
 from types import SimpleNamespace
 
-import anthropic
+import pytest
 
 from radar import analyze, brief, classify, cli, ingest, labels, watch
 from radar.connectors import intercom
@@ -111,6 +111,7 @@ def test_intercom_search_stops_on_repeated_cursor(monkeypatch):
 
 # 10 ------------------------------------------- stale cache / bad ids / honest count
 def test_claude_cache_rejects_stale_categories_and_negative_ids(monkeypatch, tmp_path):
+    anthropic = pytest.importorskip("anthropic")  # optional dependency: pip install .[claude]
     items = [_c(i, f"text {i} withdrawal pending for days") for i in range(3)]
     cache = tmp_path / "c.json"
     cache.write_text(json.dumps({classify._cache_key(items[0]): {"category": "bonus_abuse", "other_categories": [], "promos": [],

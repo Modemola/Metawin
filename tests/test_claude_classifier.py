@@ -5,11 +5,12 @@ failure falling back to the keyword rules."""
 import json
 from types import SimpleNamespace
 
-import anthropic
 import pytest
 
 from radar import classify
 from radar.models import Complaint
+
+anthropic = pytest.importorskip("anthropic")  # optional dependency: pip install .[claude]
 
 
 def _items(n):
