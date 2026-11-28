@@ -108,6 +108,25 @@ alerts on spikes in the latest two weeks of data, and remembers what it has
 sent in `.cache/watch_state.json`, so nothing is announced twice. The webhook
 URL is read from an environment variable, never from the command line.
 
+## Public forum posts (Bitcointalk)
+
+No account or key needed. Players often take unresolved casino disputes to
+Bitcointalk, including MetaWin's official announcement thread.
+
+```bash
+# Whole complaint threads, plus the complaints posted in the announcement thread since a date
+.venv/bin/python -m radar fetch bitcointalk --topic 5578771 --topic 5576505 --out data/bitcointalk_threads.csv
+.venv/bin/python -m radar fetch bitcointalk --topic 5483159 --since 2025-06-01 --complaints-only --out data/bitcointalk_ann.csv
+```
+
+The fetcher leaves 3 seconds between requests, drops quoted text so a
+complaint isn't counted once per reply, and hashes usernames before writing
+anything. Forum threads mix complaints with commentary, so a forum post only
+counts as a complaint when it names a problem **and** describes the writer's
+own experience ("my withdrawal", "I deposited…"). Treat forum data as evidence
+of **specific incidents** to read and quote. Counts mostly reflect which
+threads you fetched, not how common a problem is.
+
 ## Collecting Trustpilot reviews
 
 Trustpilot blocks automated scraping, so collect reviews in a normal browser:
