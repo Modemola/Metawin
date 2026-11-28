@@ -7,7 +7,6 @@ import re
 from dataclasses import dataclass, field
 from datetime import date
 
-
 FORUM_SOURCES = {"bitcointalk"}
 
 # On forums most posts are bystanders discussing someone else's problem. A post
